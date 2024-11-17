@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "311888649321",
+    "project_id": "demensiaapp",
+    "storage_bucket": "demensiaapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311888649321:android:05abbdec6c6e577d3bd6f8",
+        "android_client_info": {
+          "package_name": "com.example.demensia_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsTTC1CpCTj0VvvjNJfFisCd0MpKuV93U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
