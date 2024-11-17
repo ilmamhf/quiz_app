@@ -8,60 +8,87 @@ class FirestoreService {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  final DocumentReference blokUser =
-    FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
-
+  // final DocumentReference blokUser =
+  //   FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.uid);
+    
+// ------------------------------------------- soal pilihan ganda
   // Fungsi untuk menambah soal ke Firestore
-  Future<void> addSoalUmum(soalUmum) async {
-    await _firestore.collection('soal umum').add({
-      'Soal': soalUmum.soal,
-      'Jawaban': soalUmum.listJawaban,
-      'Jawaban Benar': soalUmum.jawabanBenar
-    });
+  Future<void> addSoalPGUmum(soalUmum) async {
+    DocumentReference docRef = await _firestore.collection('soal pg umum').add({
+        'Soal': soalUmum.soal,
+        'Jawaban': soalUmum.listJawaban,
+        'Jawaban Benar': soalUmum.jawabanBenar,
+      });
+
+      // Simpan ID dokumen ke dalam dokumen itu sendiri
+      await docRef.update({'id': docRef.id});
+
+      print('Dokumen berhasil dibuat dengan ID: ${docRef.id}');
+  }
+
+  // Fungsi untuk menghapus soal di Firestore
+  Future<void> deleteSoalPGUmum(soalId) async {
+    try {
+      await _firestore.collection('soal pg umum').doc(soalId).delete();
+      print('Dokumen dengan ID $soalId berhasil dihapus.');
+    } catch (e) {
+      print('Gagal menghapus dokumen: $e');
+    }
   }
 
   // Fungsi untuk mengambil soal dari Firestore dan mengembalikannya sebagai list of Soal
-  Future<List<Soal>> fetchSoalUmum() async {
-    QuerySnapshot snapshot = await _firestore.collection('soal umum').get();
+  Future<List<Soal>> fetchSoalPGUmum() async {
+    QuerySnapshot snapshot = await _firestore.collection('soal pg umum').get();
     return snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return Soal(
         soal: data['Soal'],
         listJawaban: List<String>.from(data['Jawaban']),
         jawabanBenar: data['Jawaban Benar'],
+        id: doc.id
       );
     }).toList();
   }
 
-  
+// ------------------------------------------- soal kognitif
+  // Fungsi untuk menambah soal ke Firestore
+  Future<void> addSoalKognitifUmum(SoalKognitif soalKognitifUmum) async {
+    await _firestore.collection('soal kognitif umum').add({
+      'Soal': soalKognitifUmum.soal,
+      'Jawaban Benar': soalKognitifUmum.jawabanBenar
+    });
+  }
 
-  // Future<void> addUser(userProfile) {
-  //   return blokUser.set({
+  // Fungsi untuk mengambil soal dari Firestore dan mengembalikannya sebagai list of Soal
+  Future<List<SoalKognitif>> fetchSoalKognitifUmum() async {
+    QuerySnapshot snapshot = await _firestore.collection('soal kognitif umum').get();
+    return snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return SoalKognitif(
+        soal: data['Soal'],
+        jawabanBenar: data['Jawaban Benar'],
+      );
+    }).toList();
+  }
+  
+  // Future<void> addUserDefault(String userID, userProfile) {
+  // return FirebaseFirestore.instance.collection('users').doc(userID).set({
+  //   'Nama Lengkap': userProfile.nama,
+  //   'Tanggal Lahir': userProfile.tglLahir,
+  //   'Jenis Kelamin': userProfile.jenisKelamin,
+  //   'No HP': userProfile.noHP,
+    
+  //   });
+  // }
+
+  // Future<void> updateUserDefault(userProfile) {
+  //   return blokUser.update({
   //     'Nama Lengkap': userProfile.nama,
   //     'Tanggal Lahir': userProfile.tglLahir,
   //     'Jenis Kelamin': userProfile.jenisKelamin,
   //     'No HP': userProfile.noHP,
   //   });
   // }
-
-  Future<void> addUserDefault(String userID, userProfile) {
-  return FirebaseFirestore.instance.collection('users').doc(userID).set({
-    'Nama Lengkap': userProfile.nama,
-    'Tanggal Lahir': userProfile.tglLahir,
-    'Jenis Kelamin': userProfile.jenisKelamin,
-    'No HP': userProfile.noHP,
-    
-    });
-  }
-
-  Future<void> updateUserDefault(userProfile) {
-    return blokUser.update({
-      'Nama Lengkap': userProfile.nama,
-      'Tanggal Lahir': userProfile.tglLahir,
-      'Jenis Kelamin': userProfile.jenisKelamin,
-      'No HP': userProfile.noHP,
-    });
-  }
 
 // ----------------------------------------------------- add, update user sesuai role
   // ------------------------------------------- admin

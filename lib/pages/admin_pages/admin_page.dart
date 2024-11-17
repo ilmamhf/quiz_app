@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../components/my_menu_card.dart';
 import '../../services/firestore.dart';
+import 'forms/soal_kognitif_umum_formpage.dart';
 import 'forms/soal_umum_formpage.dart';
 import '../start_pages/home_page.dart';
 import 'list_user_page.dart';
@@ -112,7 +113,7 @@ class _AdminPageState extends State<AdminPage> {
                   // buat soal umum
                   MyMenuCard(
                     onTap: () => 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalUmum())), 
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalPGUmum())), 
                     text: 'Buat Soal PG Umum', 
                     size: 140,
                     cardIcon: Icon(Icons.list, size: 60,),
@@ -121,7 +122,8 @@ class _AdminPageState extends State<AdminPage> {
             
                   // buat soal kognitif umum
                   MyMenuCard(
-                    onTap: () => {}, 
+                    onTap: () => 
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalKognitifUmum())), 
                     text: 'Buat Soal Kognitif Umum',
                     size: 140,
                     cardIcon: Icon(Icons.article, size: 60,),

@@ -21,6 +21,7 @@ class MyMenuCard extends StatelessWidget {
       child: InkWell(
         onLongPress: () => {},
         onTap: onTap,
+        borderRadius: BorderRadius.circular(20), 
         child: Ink(
           decoration:  BoxDecoration(
             borderRadius: BorderRadius.circular(20), 

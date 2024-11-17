@@ -43,7 +43,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
 
     // Fungsi untuk mengambil soal dari Firestore
   Future<void> _fetchSoalUmum() async {
-    List<Soal> fetchedSoalUmum = await _firestoreService.fetchSoalUmum();
+    List<Soal> fetchedSoalUmum = await _firestoreService.fetchSoalPGUmum();
     setState(() {
       soal = fetchedSoalUmum;
     });

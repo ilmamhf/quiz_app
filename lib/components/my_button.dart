@@ -4,12 +4,14 @@ class MyButton extends StatelessWidget {
   final Function()? onTap;
   final String text;
   final double size;
+  final double paddingSize;
 
   const MyButton({
     super.key, 
     required this.onTap, 
     required this.text,
     required this.size,
+    this.paddingSize = 100.0
   });
 
   @override
@@ -18,7 +20,7 @@ class MyButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.all(size),
-        margin: const EdgeInsets.symmetric(horizontal: 100),
+        margin: EdgeInsets.symmetric(horizontal: paddingSize),
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(8)

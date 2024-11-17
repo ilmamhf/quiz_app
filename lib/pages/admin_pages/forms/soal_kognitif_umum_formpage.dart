@@ -89,7 +89,7 @@ class FormSoalKognitifUmum extends StatelessWidget {
                     MyFormRow(
                       labelText: 'Jawaban Benar : ',
                       myWidget: MyTextField(
-                        controller: soalController,
+                        controller: jawabanBenarController,
                         hintText: 'Ketik jawaban benar di sini',
                         obscureText: false,
                       ),
@@ -108,7 +108,7 @@ class FormSoalKognitifUmum extends StatelessWidget {
                           jawabanBenarController.text.isNotEmpty
                           ) {
 
-                          SoalKognitif soalUmum = SoalKognitif(
+                          SoalKognitif soalKognitifUmum = SoalKognitif(
                             soal: soalController.text,
                             // gambar: 'Belum ada gambar',
                             jawabanBenar: jawabanBenarController.text,
@@ -116,10 +116,10 @@ class FormSoalKognitifUmum extends StatelessWidget {
                 
                           // add to db
                           print('uploading... ');
-                          firestoreService.addSoalUmum(soalUmum);
+                          firestoreService.addSoalKognitifUmum(soalKognitifUmum);
                           print('soal terupload');
                           
-                          MyBigPopUp.showAlertDialog(context: context, teks: 'Soal kognitig umum sudah terupload!');
+                          MyBigPopUp.showAlertDialog(context: context, teks: 'Soal kognitif umum sudah terupload!');
                 
                           // Navigator.push(context, MaterialPageRoute(
                           //   builder: (context) => SelesaiBuatSoalUmumPage()

@@ -9,15 +9,16 @@ import '../../../components/my_form_row.dart';
 import '../../../components/my_textfield.dart';
 import '../../../models/soal.dart';
 import '../../../services/firestore.dart';
+import '../kumpulan_pg_umum_page.dart';
 
-class FormSoalUmum extends StatefulWidget {
-  const FormSoalUmum({super.key});
+class FormSoalPGUmum extends StatefulWidget {
+  const FormSoalPGUmum({super.key});
 
   @override
-  State<FormSoalUmum> createState() => _FormSoalUmumState();
+  State<FormSoalPGUmum> createState() => _FormSoalPGUmumState();
 }
 
-class _FormSoalUmumState extends State<FormSoalUmum> {
+class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
   final FirestoreService firestoreService = FirestoreService();
 
   String levelController = 'Mudah/Sedang/Susah';
@@ -174,48 +175,65 @@ class _FormSoalUmumState extends State<FormSoalUmum> {
                 
                     const SizedBox(height: 20),
                 
-                    // tombol kirim
-                
-                    MyButton(
-                      onTap: () { 
-                
-                        // check apakah
-                        if (
-                          soalController.text.isNotEmpty ||
-                          jawabanControllers[0].text.isNotEmpty ||
-                          jawabanControllers[1].text.isNotEmpty ||
-                          jawabanControllers[2].text.isNotEmpty ||
-                          jawabanControllers[3].text.isNotEmpty ||
-                          selectedAnswerNotifier.value != -1
-                          ) {
-                          for (int i = 0; i < 4; i++) {
-                            listJawaban[i] = jawabanControllers[i].text;
-                          }
-                          Soal soalUmum = Soal(
-                            // level: levelController,
-                            soal: soalController.text,
-                            // gambar: 'Belum ada gambar',
-                            listJawaban: listJawaban,
-                            jawabanBenar: listJawaban[selectedAnswerNotifier.value],
-                          );
-                
-                          // add to db
-                          print('uploading... ');
-                          firestoreService.addSoalUmum(soalUmum);
-                          print('soal terupload');
-                          
-                          showAlertDialog('Soal sudah terupload!');
-                
-                          // Navigator.push(context, MaterialPageRoute(
-                          //   builder: (context) => SelesaiBuatSoalUmumPage()
-                          // )
-                          // );
-                        } else {
-                          showErrorMessage('Soal tidak valid!');
-                        }
-                      },
-                      size: 5,
-                      text: 'Kirim',
+                    // tombol Simpan soal
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: MyButton(
+                            size: 5,
+                            text: 'Simpan Soal',
+                            paddingSize: 15,
+                            onTap: () { 
+                                              
+                              // check apakah
+                              if (
+                                soalController.text.isNotEmpty ||
+                                jawabanControllers[0].text.isNotEmpty ||
+                                jawabanControllers[1].text.isNotEmpty ||
+                                jawabanControllers[2].text.isNotEmpty ||
+                                jawabanControllers[3].text.isNotEmpty ||
+                                selectedAnswerNotifier.value != -1
+                                ) {
+                                for (int i = 0; i < 4; i++) {
+                                  listJawaban[i] = jawabanControllers[i].text;
+                                }
+                                Soal soalUmum = Soal(
+                                  // level: levelController,
+                                  soal: soalController.text,
+                                  // gambar: 'Belum ada gambar',
+                                  listJawaban: listJawaban,
+                                  jawabanBenar: listJawaban[selectedAnswerNotifier.value],
+                                );
+                                              
+                                // add to db
+                                print('uploading... ');
+                                firestoreService.addSoalPGUmum(soalUmum);
+                                print('soal terupload');
+                                
+                                showAlertDialog('Soal sudah terupload!');
+                                              
+                                // Navigator.push(context, MaterialPageRoute(
+                                //   builder: (context) => SelesaiBuatSoalUmumPage()
+                                // )
+                                // );
+                              } else {
+                                showErrorMessage('Soal tidak valid!');
+                              }
+                            },
+                          ),
+                        ),
+
+                        Expanded(
+                          child: MyButton(
+                            size: 5,
+                            text: 'Kumpulan Soal',
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => KumpulanSoalPage())), 
+                            paddingSize: 15,
+                          ),
+                        ),
+                        
+                      ],
                     ),
                   ],
                 ),
