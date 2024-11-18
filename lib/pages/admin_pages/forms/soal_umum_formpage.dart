@@ -34,12 +34,6 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
 
   final jawabanBenarController = TextEditingController();
 
-  List<String> listLevel = [
-    'Mudah',
-    'Sedang',
-    'Susah'
-  ];
-
   List<String> abcd = ['A', 'B', 'C', 'D'];
   bool isChecked = false;
   ValueNotifier<int> selectedAnswerNotifier = ValueNotifier<int>(-1);

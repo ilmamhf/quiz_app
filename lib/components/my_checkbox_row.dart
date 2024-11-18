@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class MyCheckboxRow extends StatelessWidget {
   List<String> abcd;
   final ValueNotifier<int> selectedAnswerNotifier;
+  final bool enabled;
 
   MyCheckboxRow({
     super.key,
     required this.abcd,
     required this.selectedAnswerNotifier,
+    this.enabled = false,
   });
 
   // List<String> abcd = ['A', 'B', 'C', 'D'];
@@ -33,6 +35,7 @@ class MyCheckboxRow extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Container(
                                 width: 18.0,
@@ -41,13 +44,14 @@ class MyCheckboxRow extends StatelessWidget {
                                 child: Checkbox(
                                   activeColor: Colors.green,
                                   value: selectedAnswerIndex == i,
-                                  onChanged: (bool? value) {
+                                  onChanged: enabled ? (bool? value) {
                                     if (value == true) {
                                       selectedAnswerNotifier.value = i; // Update nilai ValueNotifier
                                     }
-                                  },
+                                  } : null,
                                 ),
                               ),
+
                               Text(abcd[i]),
                             ],
                           ),

@@ -5,12 +5,14 @@ class MyTextField extends StatelessWidget {
   final controller;
   final String hintText;
   final bool obscureText;
+  bool enabled;
 
   MyTextField({
     super.key,
     required this.controller,
     required this.hintText,
     required this.obscureText,
+    this.enabled = true,
     });
 
   // FocusNode node = FocusNode();
@@ -34,6 +36,7 @@ class MyTextField extends StatelessWidget {
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: 100.0),
             child: TextFormField(
+              enabled: enabled,
               
               controller: controller,
               obscureText: obscureText,
