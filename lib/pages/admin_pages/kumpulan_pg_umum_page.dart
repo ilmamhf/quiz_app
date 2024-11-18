@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../../models/soal.dart';
 import '../../../services/firestore.dart';
+import '../../components/big_popup.dart';
 import '../../components/my_checkbox_row.dart';
 import '../../components/my_form_row.dart';
 import '../../components/my_textfield.dart';
@@ -20,20 +21,27 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
   PageController _controller = PageController();
   int currentPageIndex = 0;
 
-  final soalController = TextEditingController();
+  // final soalController = TextEditingController();
   final gambarController = TextEditingController();
-  List<TextEditingController> jawabanControllers = [
-  TextEditingController(), // jawaban A
-  TextEditingController(), // jawaban B
-  TextEditingController(), // jawaban C
-  TextEditingController(), // jawaban D
-  ];
+  // List<TextEditingController> jawabanControllers = [
+  // TextEditingController(), // jawaban A
+  // TextEditingController(), // jawaban B
+  // TextEditingController(), // jawaban C
+  // TextEditingController(), // jawaban D
+  // ];
   List<String> listJawaban = ['', '', '', ''];
   List<String> abcd = ['A', 'B', 'C', 'D'];
 
-  final jawabanBenarController = TextEditingController();
+  // final jawabanBenarController = TextEditingController();
   bool isChecked = false;
-  ValueNotifier<int> selectedAnswerNotifier = ValueNotifier<int>(-1);
+  // ValueNotifier<int> selectedAnswerNotifier = ValueNotifier<int>(-1);
+  List<TextEditingController> soalControllers = [];
+  List<List<TextEditingController>> jawabanControllers = [];
+  List<TextEditingController> jawabanBenarControllers = [];
+  List<ValueNotifier<int>> selectedAnswerNotifiers = [];
+
+  int originalSelectedAnswer = 0;
+
 
   bool canEdit = false;
 
@@ -47,6 +55,29 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
     List<Soal> fetchedSoal = await firestoreService.fetchSoalPGUmum();
     setState(() {
       soal = fetchedSoal;
+      soalControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
+      jawabanControllers = List.generate(fetchedSoal.length, (index) => List.generate(4, (i) => TextEditingController()));
+      jawabanBenarControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
+      selectedAnswerNotifiers = List.generate(fetchedSoal.length, (index) => ValueNotifier<int>(-1)); // Inisialisasi ValueNotifier
+
+      // Inisialisasi controller dengan data soal
+      for (int i = 0; i < fetchedSoal.length; i++) {
+        soalControllers[i].text = fetchedSoal[i].soal;
+        for (int j = 0; j < 4; j++) {
+          jawabanControllers[i][j].text = fetchedSoal[i].listJawaban[j];
+        }
+        jawabanBenarControllers[i].text = fetchedSoal[i].jawabanBenar;
+
+        // Set ValueNotifier untuk jawaban yang benar
+        for (int j = 0; j < 4; j++) {
+          if (fetchedSoal[i].listJawaban[j] == fetchedSoal[i].jawabanBenar) {
+            selectedAnswerNotifiers[i].value = j; // Set indeks jawaban yang benar
+            break;
+          }
+        }
+
+        
+      }
     });
   }
 
@@ -60,27 +91,26 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
     _fetchSoal(); // Refresh soal setelah dihapus
   }
 
-  void _editSoal(Soal soal) {
+  void _editSoal(Soal soal, int answerValue) {
     setState(() {
       canEdit = true;
+
+      // Simpan nilai asli dari selectedAnswerNotifier
+      originalSelectedAnswer = answerValue;
     });
   }
 
-  void _simpanSoal(Soal soal) {
+  // void _simpanSoal(Soal soal) {
 
+  // }
+
+  void _saveLocal(Soal soalBaru, int index) {
+    soal[index] = soalBaru;
   }
 
-  void _refresh(Soal soal) {
+  void _exitEdit() {
     setState(() {
       canEdit = false;
-      soalController.text = soal.soal;
-      for (int i = 0; i < 4; i++){
-        jawabanControllers[i].text = soal.listJawaban[i];
-        if (soal.listJawaban[i] == soal.jawabanBenar) {
-          selectedAnswerNotifier.value = i;
-        }
-      }
-      jawabanBenarController.text = soal.jawabanBenar;
     });
   }
 
@@ -118,7 +148,7 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
                                 currentPageIndex = index;
                               });
                               // matikan editing
-                              _refresh(soal[currentPageIndex]);
+                              _exitEdit();
                               print(soal[index].soal);
                             },
                             itemBuilder: (context, index) {
@@ -176,14 +206,14 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
 
   Widget buildSoalPage(Soal soal, int index) {
 
-    soalController.text = soal.soal;
-      for (int i = 0; i < 4; i++){
-        jawabanControllers[i].text = soal.listJawaban[i];
-        if (soal.listJawaban[i] == soal.jawabanBenar) {
-          selectedAnswerNotifier.value = i;
-        }
-      }
-    jawabanBenarController.text = soal.jawabanBenar;
+    // soalController.text = soal.soal;
+    //   for (int i = 0; i < 4; i++){
+    //     jawabanControllers[i].text = soal.listJawaban[i];
+    //     if (soal.listJawaban[i] == soal.jawabanBenar) {
+    //       selectedAnswerNotifier.value = i;
+    //     }
+    //   }
+    // jawabanBenarController.text = soal.jawabanBenar;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -211,7 +241,7 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
               MyFormRow(
                 labelText: 'Soal : ',
                 myWidget: MyTextField(
-                  controller: soalController,
+                  controller: soalControllers[index],
                   hintText: 'Ketik soal di sini',
                   obscureText: false,
                   enabled: canEdit,
@@ -227,7 +257,7 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
                 MyFormRow(
                 labelText: 'Jawaban ${abcd[i]} : ',
                 myWidget: MyTextField(
-                  controller: jawabanControllers[i],
+                  controller: jawabanControllers[index][i],
                   hintText: 'Ketik jawaban ${abcd[i]} di sini',
                   obscureText: false,
                   enabled: canEdit
@@ -243,26 +273,93 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
                 labelText: 'Jawaban Benar : ',
                 myWidget: MyCheckboxRow(
                   abcd: abcd,
-                  selectedAnswerNotifier: selectedAnswerNotifier,
+                  selectedAnswerNotifier: selectedAnswerNotifiers[index],
                   enabled: canEdit
                 )
               ),
         
               // edit dan hapus
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: !canEdit ? [
+                  // edit soal
                   ElevatedButton.icon(
-                    onPressed: () => _editSoal(soal),
+                    onPressed: () {
+                      _editSoal(soal, selectedAnswerNotifiers[index].value);
+                    },
                     icon: const Icon(Icons.edit),
                     label: const Text("Edit"),
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                   ),
+
+                  // delete soal
                   ElevatedButton.icon(
-                    onPressed: () => _deleteSoal(soal.id),
+                    onPressed: () {
+                      MyBigPopUp.showAlertDialog(
+                        teks: "Apakah anda yakin ingin menghapus?",
+                        context: context,
+                        additionalButtons: [
+                          // batal
+                          TextButton(
+                            onPressed: () => Navigator.pop(context), 
+                            child: Text('Batal')),
+                          // hapus  
+                          TextButton(
+                            onPressed: () {
+                              _deleteSoal(soal.id);
+                              Navigator.pop(context);
+                            }, 
+                            child: Text('Hapus')),
+                        ],
+                      );
+                    },
                     icon: const Icon(Icons.delete),
                     label: const Text("Hapus"),
                     style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  ),
+                ] : [
+                  // batal
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      //balikkan value
+                      soalControllers[index].text = soal.soal;
+                      for (int i = 0; i < 4; i++) {
+                        jawabanControllers[index][i].text = soal.listJawaban[i];
+                      }
+                      // jawabanBenarControllers[index].text = soal.jawabanBenar;
+                      selectedAnswerNotifiers[index].value = originalSelectedAnswer;
+                      _exitEdit();
+                    },
+                    icon: const Icon(Icons.cancel),
+                    label: const Text("Batal"),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                  ),
+
+                  // save soal
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      // Buat objek soal baru dengan data yang telah diubah
+                      Soal updatedSoal = Soal(
+                        id: soal.id, // Pastikan untuk menyertakan ID
+                        soal: soalControllers[index].text,
+                        listJawaban: jawabanControllers[index].map((controller) => controller.text).toList(),
+                        jawabanBenar: soal.listJawaban[selectedAnswerNotifiers[index].value],
+                      );
+
+                      // Panggil fungsi untuk memperbarui soal di Firestore
+                      await firestoreService.updateSoalPGUmum(updatedSoal);
+
+                      // Perbarui data lokal
+                      setState(() {
+                        // soal[index] = updatedSoal; // Perbarui soal lokal
+                        // soal = updatedSoal;
+                        _saveLocal(updatedSoal, index);
+                        canEdit = false;
+                      });
+                    },
+                    icon: const Icon(Icons.save),
+                    label: const Text("Simpan"),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   ),
                 ],
               ),

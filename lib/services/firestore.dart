@@ -26,6 +26,16 @@ class FirestoreService {
       print('Dokumen berhasil dibuat dengan ID: ${docRef.id}');
   }
 
+  // Fungsi untuk memperbarui soal di Firestore
+  Future<void> updateSoalPGUmum(Soal soalUmum) async {
+    await _firestore.collection('soal pg umum').doc(soalUmum.id).update({
+      'Soal': soalUmum.soal,
+      'Jawaban': soalUmum.listJawaban,
+      'Jawaban Benar': soalUmum.jawabanBenar,
+    });
+    print('Dokumen berhasil diperbarui dengan ID: ${soalUmum.id}');
+  }
+
   // Fungsi untuk menghapus soal di Firestore
   Future<void> deleteSoalPGUmum(soalId) async {
     try {

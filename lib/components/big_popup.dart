@@ -4,6 +4,7 @@ class MyBigPopUp {
   static void showAlertDialog({
     required BuildContext context,
     required String teks,
+    List<Widget>? additionalButtons, // Parameter opsional untuk tombol tambahan
   }) {
     showDialog(
       context: context,
@@ -14,10 +15,13 @@ class MyBigPopUp {
             textAlign: TextAlign.center,
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
+            if (additionalButtons != null && additionalButtons.isNotEmpty)
+              ...additionalButtons // Menambahkan tombol tambahan jika ada
+            else
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
           ],
         );
       },
