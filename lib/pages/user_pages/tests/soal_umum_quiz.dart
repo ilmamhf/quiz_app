@@ -14,7 +14,7 @@ class SoalUmumQuiz extends StatefulWidget {
 class _SoalUmumQuizState extends State<SoalUmumQuiz> {
   final FirestoreService _firestoreService = FirestoreService();
   
-  List<Soal> soal = [
+  List<SoalPG> soal = [
     // Soal(
     //   // gambar: '',
     //   soal: "1 + 2?",
@@ -43,7 +43,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
 
     // Fungsi untuk mengambil soal dari Firestore
   Future<void> _fetchSoalUmum() async {
-    List<Soal> fetchedSoalUmum = await _firestoreService.fetchSoalPGUmum();
+    List<SoalPG> fetchedSoalUmum = await _firestoreService.fetchSoalPGUmum();
     setState(() {
       soal = fetchedSoalUmum;
     });
@@ -133,7 +133,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
     );
   }
 
-  Widget buildSoalPage(Soal soal, int index) {
+  Widget buildSoalPage(SoalPG soal, int index) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(

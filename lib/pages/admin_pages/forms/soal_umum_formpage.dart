@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../../../components/my_appbar.dart';
 import '../../../components/my_button.dart';
 import '../../../components/my_checkbox_row.dart';
 import '../../../components/my_form_row.dart';
@@ -21,7 +22,6 @@ class FormSoalPGUmum extends StatefulWidget {
 class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
   final FirestoreService firestoreService = FirestoreService();
 
-  String levelController = 'Mudah/Sedang/Susah';
   final soalController = TextEditingController();
   final gambarController = TextEditingController();
   List<TextEditingController> jawabanControllers = [
@@ -81,24 +81,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
     return Scaffold(
       backgroundColor: Color(0xFF00cfd6),
 
-      appBar: AppBar(
-        title: Text("Buat Soal Umum"),
-        backgroundColor: Color(0xFF00cfd6),
-        foregroundColor: Colors.white,
-        scrolledUnderElevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle
-            ),
-            child: BackButton(
-              color: Color(0xFF00cfd6),
-            ),
-          ),
-        ), 
-      ),
+      appBar: MyAppBar(title: "Buat Soal PG Umum",),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -164,6 +147,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                       myWidget: MyCheckboxRow(
                         abcd: abcd,
                         selectedAnswerNotifier: selectedAnswerNotifier,
+                        enabled: true,
                       )
                     ),
                 
@@ -192,7 +176,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                                 for (int i = 0; i < 4; i++) {
                                   listJawaban[i] = jawabanControllers[i].text;
                                 }
-                                Soal soalUmum = Soal(
+                                SoalPG soalUmum = SoalPG(
                                   // level: levelController,
                                   soal: soalController.text,
                                   // gambar: 'Belum ada gambar',

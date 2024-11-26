@@ -1,6 +1,8 @@
+import 'package:demensia_app/components/my_form_row.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/text_display.dart';
+import '../../components/user_data_display.dart';
 import '../../models/profil.dart';
 import '../../services/firestore.dart';
 
@@ -67,67 +69,69 @@ class _ListUserPageState extends State<ListUserPage> {
         : listUser.isEmpty
           ? Center(child: Text("Tidak ada user")) // Kondisi kosong
         : SafeArea(
-        child: Center(
-          child: Container(
-            width: 400,
-            height: 400,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 2.0),
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16)
-              ),
-            child: Column(
-              children: [
-                Expanded(
-                  child: PageView.builder(
-                    controller: _controller,
-                    itemCount: listUser.length,
-                    onPageChanged: (index) {
-                      setState(() {
-                        currentPageIndex = index;
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      return buildListUserPage(listUser[index], index);
-                    }
-                  )
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Visibility(
-                      visible: currentPageIndex > 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            _controller.previousPage(
-                              duration: Duration(milliseconds: 300), 
-                              curve: Curves.easeInOut,
-                            );
-                          }, child: Text("Soal sebelumnya"),
-                        ),
-                      ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 100.0),
+          child: Column(
+            children: [
+
+              Flexible(
+                child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      color: Colors.white,
                     ),
-            
-                    Visibility(
-                      visible: currentPageIndex < listUser.length - 1,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            _controller.nextPage(
-                              duration: Duration(milliseconds: 300), 
-                              curve: Curves.easeInOut,
-                            );
-                          }, child: Text("Soal selanjutnya"),
-                        ),
-                      ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: PageView.builder(
+                      controller: _controller,
+                      itemCount: listUser.length,
+                      onPageChanged: (index) {
+                        setState(() {
+                          currentPageIndex = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        return buildListUserPage(listUser[index], index);
+                      }
                     ),
-                  ],
+                  ),
                 )
-              ],
-            ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Visibility(
+                    visible: currentPageIndex > 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _controller.previousPage(
+                            duration: Duration(milliseconds: 300), 
+                            curve: Curves.easeInOut,
+                          );
+                        }, child: Text("Soal sebelumnya"),
+                      ),
+                    ),
+                  ),
+          
+                  Visibility(
+                    visible: currentPageIndex < listUser.length - 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _controller.nextPage(
+                            duration: Duration(milliseconds: 300), 
+                            curve: Curves.easeInOut,
+                          );
+                        }, child: Text("Soal selanjutnya"),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
           ),
         ),
       ),
@@ -135,49 +139,57 @@ class _ListUserPageState extends State<ListUserPage> {
   }
 
   Widget buildListUserPage(Profil user, int index) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black, width: 2.0),
-          color: Colors.white
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-
-            // nama akun
-            TextDisplay(
-              judul: 'Nama Lengkap :',
-              text: user.nama,
+    return Container(
+      // constraints: BoxConstraints(maxHeight: 200),
+      decoration: BoxDecoration(
+        // border: Border.all(color: Colors.black, width: 2.0),
+        color: Colors.red,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // judul
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              "User ${index + 1}",
+              style: TextStyle(fontSize: 20.0),
+              textAlign: TextAlign.center,
             ),
-
-            SizedBox(height: 5.0,),
-
-            // tanggal lahir
-            
-            TextDisplay(
-              judul: 'Tanggal Lahir :',
-              text: dateFormatter(user.tglLahir),
-            ),
-            
-            SizedBox(height: 5.0,),
-
-            // jenis kelamin
-            TextDisplay(
-              judul: 'Jenis Kelamin :',
-              text: user.jenisKelamin,
-            ),
-            
-            SizedBox(height: 5.0,),
-
-            // no hp
-            TextDisplay(
-              judul: 'No HP :',
-              text: user.noHP,
-            ),
-          ],
-        ),
+          ),
+    
+          // nama
+          MyUserDataDisplay(
+            text1: 'Nama Lengkap :',
+            text2: user.nama,
+          ),
+    
+          const SizedBox(height: 5),
+          
+          // tgl lahir
+          MyFormRow(
+            labelText: 'Tanggal Lahir :', 
+            myWidget: Container(child: Text(dateFormatter(user.tglLahir)))
+          ),
+    
+          const SizedBox(height: 5),
+    
+          // Jenis Kelamin
+          MyFormRow(
+            labelText: 'Jenis Kelamin :', 
+            myWidget: Container(child: Text(user.jenisKelamin))
+          ),
+    
+          const SizedBox(height: 5),
+    
+          // No HP
+          MyFormRow(
+            labelText: 'No HP :', 
+            myWidget: Container(child: Text(user.noHP))
+          ),
+    
+          const SizedBox(height: 5),
+        ],
       ),
     );
   }

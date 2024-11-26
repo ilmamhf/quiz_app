@@ -7,6 +7,7 @@ import '../../../components/my_textfield.dart';
 import '../../../components/small_popup.dart';
 import '../../../models/soal.dart';
 import '../../../services/firestore.dart';
+import '../kumpulan_kognitif_umum_page.dart';
 
 class FormSoalKognitifUmum extends StatelessWidget {
   const FormSoalKognitifUmum({super.key});
@@ -99,40 +100,56 @@ class FormSoalKognitifUmum extends StatelessWidget {
                 
                     // tombol kirim
                 
-                    MyButton(
-                      onTap: () { 
-                
-                        // check apakah
-                        if (
-                          soalController.text.isNotEmpty &&
-                          jawabanBenarController.text.isNotEmpty
-                          ) {
-
-                          SoalKognitif soalKognitifUmum = SoalKognitif(
-                            soal: soalController.text,
-                            // gambar: 'Belum ada gambar',
-                            jawabanBenar: jawabanBenarController.text,
-                          );
-                
-                          // add to db
-                          print('uploading... ');
-                          firestoreService.addSoalKognitifUmum(soalKognitifUmum);
-                          print('soal terupload');
+                    Row(
+                      children: [
+                        Expanded(
+                          child: MyButton(
+                            size: 5,
+                            text: 'Simpan Soal',
+                            paddingSize: 15,
+                            onTap: () { 
+                                          
+                              // check apakah
+                              if (
+                                soalController.text.isNotEmpty &&
+                                jawabanBenarController.text.isNotEmpty
+                                ) {
                           
-                          MyBigPopUp.showAlertDialog(context: context, teks: 'Soal kognitif umum sudah terupload!');
-                
-                          // Navigator.push(context, MaterialPageRoute(
-                          //   builder: (context) => SelesaiBuatSoalUmumPage()
-                          // )
-                          // );
-                        } else {
-                          MySmallPopUp.showToast(
-                            message: 'Soal tidak valid!',
-                          );
-                        }
-                      },
-                      size: 5,
-                      text: 'Kirim',
+                                SoalKognitif soalKognitifUmum = SoalKognitif(
+                                  soal: soalController.text,
+                                  // gambar: 'Belum ada gambar',
+                                  jawabanBenar: jawabanBenarController.text,
+                                );
+                                          
+                                // add to db
+                                print('uploading... ');
+                                firestoreService.addSoalKognitifUmum(soalKognitifUmum);
+                                print('soal terupload');
+                                
+                                MyBigPopUp.showAlertDialog(context: context, teks: 'Soal kognitif umum sudah terupload!');
+                                          
+                                // Navigator.push(context, MaterialPageRoute(
+                                //   builder: (context) => SelesaiBuatSoalUmumPage()
+                                // )
+                                // );
+                              } else {
+                                MySmallPopUp.showToast(
+                                  message: 'Soal tidak valid!',
+                                );
+                              }
+                            },
+                          ),
+                        ),
+
+                        Expanded(
+                          child: MyButton(
+                            size: 5,
+                            text: 'Kumpulan Soal',
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => KumpulanSoalKognitifPage())), 
+                            paddingSize: 15,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

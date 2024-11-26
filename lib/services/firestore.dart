@@ -5,6 +5,10 @@ import '../models/profil.dart';
 import '../models/soal.dart';
 
 class FirestoreService {
+  Future<void> addID(DocumentReference docRef) async {
+    // Simpan ID dokumen ke dalam dokumen itu sendiri
+      await docRef.update({'id': docRef.id});
+  }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -20,14 +24,13 @@ class FirestoreService {
         'Jawaban Benar': soalUmum.jawabanBenar,
       });
 
-      // Simpan ID dokumen ke dalam dokumen itu sendiri
-      await docRef.update({'id': docRef.id});
+      addID(docRef);
 
       print('Dokumen berhasil dibuat dengan ID: ${docRef.id}');
   }
 
   // Fungsi untuk memperbarui soal di Firestore
-  Future<void> updateSoalPGUmum(Soal soalUmum) async {
+  Future<void> updateSoalPGUmum(SoalPG soalUmum) async {
     await _firestore.collection('soal pg umum').doc(soalUmum.id).update({
       'Soal': soalUmum.soal,
       'Jawaban': soalUmum.listJawaban,
@@ -47,11 +50,11 @@ class FirestoreService {
   }
 
   // Fungsi untuk mengambil soal dari Firestore dan mengembalikannya sebagai list of Soal
-  Future<List<Soal>> fetchSoalPGUmum() async {
+  Future<List<SoalPG>> fetchSoalPGUmum() async {
     QuerySnapshot snapshot = await _firestore.collection('soal pg umum').get();
     return snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
-      return Soal(
+      return SoalPG(
         soal: data['Soal'],
         listJawaban: List<String>.from(data['Jawaban']),
         jawabanBenar: data['Jawaban Benar'],
@@ -63,10 +66,14 @@ class FirestoreService {
 // ------------------------------------------- soal kognitif
   // Fungsi untuk menambah soal ke Firestore
   Future<void> addSoalKognitifUmum(SoalKognitif soalKognitifUmum) async {
-    await _firestore.collection('soal kognitif umum').add({
+    DocumentReference docRef = await _firestore.collection('soal kognitif umum').add({
       'Soal': soalKognitifUmum.soal,
       'Jawaban Benar': soalKognitifUmum.jawabanBenar
     });
+
+    addID(docRef);
+
+      print('Dokumen berhasil dibuat dengan ID: ${docRef.id}');
   }
 
   // Fungsi untuk mengambil soal dari Firestore dan mengembalikannya sebagai list of Soal
@@ -77,8 +84,28 @@ class FirestoreService {
       return SoalKognitif(
         soal: data['Soal'],
         jawabanBenar: data['Jawaban Benar'],
+        id: doc.id
       );
     }).toList();
+  }
+
+  // Fungsi untuk menghapus soal di Firestore
+  Future<void> deleteSoalKognitifUmum(soalId) async {
+    try {
+      await _firestore.collection('soal kognitif umum').doc(soalId).delete();
+      print('Dokumen dengan ID $soalId berhasil dihapus.');
+    } catch (e) {
+      print('Gagal menghapus dokumen: $e');
+    }
+  }
+
+  // Fungsi untuk memperbarui soal di Firestore
+  Future<void> updateSoalKognitifUmum(SoalKognitif soalUmum) async {
+    await _firestore.collection('soal kognitif umum').doc(soalUmum.id).update({
+      'Soal': soalUmum.soal,
+      'Jawaban Benar': soalUmum.jawabanBenar,
+    });
+    print('Dokumen berhasil diperbarui dengan ID: ${soalUmum.id}');
   }
   
   // Future<void> addUserDefault(String userID, userProfile) {
