@@ -19,7 +19,7 @@ class MyCheckboxRow extends StatelessWidget {
       valueListenable: selectedAnswerNotifier,
       builder: (context, selectedAnswerIndex, child) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          padding: const EdgeInsets.symmetric(horizontal: 3.0),
             child: Row(
               children: [
                 for (int i = 0; i < 4; i++) ...[

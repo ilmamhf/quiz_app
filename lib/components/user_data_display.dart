@@ -12,23 +12,22 @@ class MyUserDataDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Flexible(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: Container(
-              width: 136,
-              padding: EdgeInsets.only(left: 30.0),
-              child: Text(text1),
-            ),
+          Container(
+            width: 136,
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text(text1, style: TextStyle(fontSize: 16.0),),
           ),
+
+          Text(':'),
       
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: Container(
-              child: Text(text2),
+              child: Text(text2, style: TextStyle(fontSize: 16.0),),
             ),
           ),
         ],

@@ -1,6 +1,8 @@
 import 'package:demensia_app/components/my_form_row.dart';
 import 'package:flutter/material.dart';
 
+import '../../components/my_appbar.dart';
+import '../../components/page_navigator_button.dart';
 import '../../components/text_display.dart';
 import '../../components/user_data_display.dart';
 import '../../models/profil.dart';
@@ -61,16 +63,14 @@ class _ListUserPageState extends State<ListUserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF00CFD6),
-      appBar: AppBar(
-        title: Text("List All User"),
-      ),
+      appBar: MyAppBar(title: 'List User',),
       body: isLoading
           ? Center(child: CircularProgressIndicator()) // Kondisi loading
         : listUser.isEmpty
           ? Center(child: Text("Tidak ada user")) // Kondisi kosong
         : SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 100.0),
+          padding: const EdgeInsets.only(right: 20.0, left: 20.0, top: 100.0, bottom: 200.0),
           child: Column(
             children: [
 
@@ -97,40 +97,15 @@ class _ListUserPageState extends State<ListUserPage> {
                   ),
                 )
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Visibility(
-                    visible: currentPageIndex > 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _controller.previousPage(
-                            duration: Duration(milliseconds: 300), 
-                            curve: Curves.easeInOut,
-                          );
-                        }, child: Text("Soal sebelumnya"),
-                      ),
-                    ),
-                  ),
-          
-                  Visibility(
-                    visible: currentPageIndex < listUser.length - 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _controller.nextPage(
-                            duration: Duration(milliseconds: 300), 
-                            curve: Curves.easeInOut,
-                          );
-                        }, child: Text("Soal selanjutnya"),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              
+              MyPageNavigatorButton(
+                canEdit: false,
+                currentPageIndex: currentPageIndex,
+                pageLength: listUser.length,
+                pagesController: _controller,
+                // _controller: _controller,
+                // currentPageIndex: currentPageIndex,
+              ),
             ],
           ),
         ),
@@ -143,52 +118,51 @@ class _ListUserPageState extends State<ListUserPage> {
       // constraints: BoxConstraints(maxHeight: 200),
       decoration: BoxDecoration(
         // border: Border.all(color: Colors.black, width: 2.0),
-        color: Colors.red,
+        // color: Colors.red,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // judul
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              "User ${index + 1}",
-              style: TextStyle(fontSize: 20.0),
-              textAlign: TextAlign.center,
-            ),
+          Text(
+            "User ${index + 1}",
+            style: TextStyle(fontSize: 60.0),
+            textAlign: TextAlign.center,
           ),
+
+          SizedBox(height: 20.0,),
     
           // nama
           MyUserDataDisplay(
-            text1: 'Nama Lengkap :',
+            text1: 'Nama Lengkap',
             text2: user.nama,
           ),
     
-          const SizedBox(height: 5),
+          const SizedBox(height: 10),
           
           // tgl lahir
-          MyFormRow(
-            labelText: 'Tanggal Lahir :', 
-            myWidget: Container(child: Text(dateFormatter(user.tglLahir)))
+          MyUserDataDisplay(
+            text1: 'Tanggal Lahir', 
+            text2: dateFormatter(user.tglLahir)
           ),
     
-          const SizedBox(height: 5),
+          const SizedBox(height: 10),
     
           // Jenis Kelamin
-          MyFormRow(
-            labelText: 'Jenis Kelamin :', 
-            myWidget: Container(child: Text(user.jenisKelamin))
+          MyUserDataDisplay(
+            text1: 'Jenis Kelamin', 
+            text2: user.jenisKelamin
           ),
     
-          const SizedBox(height: 5),
+          const SizedBox(height: 10),
     
           // No HP
-          MyFormRow(
-            labelText: 'No HP :', 
-            myWidget: Container(child: Text(user.noHP))
+          MyUserDataDisplay(
+            text1: 'No HP', 
+            text2: user.noHP
           ),
     
-          const SizedBox(height: 5),
+          // const SizedBox(height: 5),
         ],
       ),
     );

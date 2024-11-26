@@ -7,6 +7,7 @@ class Profil {
   final String noHP;
   final String role; // Bisa 'admin', 'evaluator', atau 'user'
   final String? evaluatorID; // null untuk admin dan evaluator, berisi evaluator ID untuk user
+  final String? username; // username untuk user
 
   Profil({
     required this.nama,
@@ -14,7 +15,8 @@ class Profil {
     required this.jenisKelamin,
     required this.noHP,
     required this.role,
-    this.evaluatorID
+    this.evaluatorID,
+    this.username
   });
 }
 

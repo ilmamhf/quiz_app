@@ -18,13 +18,15 @@ class MyFormRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.only(left: 30),
-            width: 120,
+            padding: EdgeInsets.only(left: 5),
+            width: 80,
             child: Text(
               labelText, 
               textAlign: TextAlign.left,
             ),
           ),
+
+          Text(':'),
       
           Expanded(
             child: myWidget,

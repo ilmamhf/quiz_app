@@ -98,13 +98,16 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // judul
-                    Text('Silahkan buat soal pilihan ganda untuk semua user'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Text('Silahkan buat soal pilihan ganda untuk semua user'),
+                    ),
                 
                     const SizedBox(height: 20),
                 
                     // soal
                     MyFormRow(
-                      labelText: 'Soal : ',
+                      labelText: 'Soal',
                       myWidget: MyTextField(
                         controller: soalController,
                         hintText: 'Ketik soal di sini',
@@ -116,7 +119,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                 
                     // gambar
                     MyFormRow(
-                      labelText: 'Gambar : ',
+                      labelText: 'Gambar',
                       myWidget: MyTextField(
                         controller: gambarController,
                         hintText: 'Fitur upload gambar gabisa di web',
@@ -129,7 +132,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                     // jawaban A-D
                     for (int i = 0; i < 4; i++)...[
                       MyFormRow(
-                      labelText: 'Jawaban ${abcd[i]} : ',
+                      labelText: 'Jawaban ${abcd[i]}',
                       myWidget: MyTextField(
                         controller: jawabanControllers[i],
                         hintText: 'Ketik jawaban ${abcd[i]} di sini',
@@ -143,7 +146,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                     // jawaban benar
                 
                     MyFormRow(
-                      labelText: 'Jawaban Benar : ',
+                      labelText: 'Jawaban Benar',
                       myWidget: MyCheckboxRow(
                         abcd: abcd,
                         selectedAnswerNotifier: selectedAnswerNotifier,

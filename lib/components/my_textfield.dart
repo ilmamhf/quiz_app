@@ -20,7 +20,7 @@ class MyTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -43,6 +43,7 @@ class MyTextField extends StatelessWidget {
             
               keyboardType: TextInputType.multiline,
               maxLines: obscureText ? 1 : null ,
+              style: TextStyle(fontSize: 14),
             
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
