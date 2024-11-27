@@ -187,6 +187,7 @@ class FirestoreService {
       'Role': 'User',
       'evaluatorID': FirebaseAuth.instance.currentUser!.uid,
       'userID': userID,
+      'password': userProfile.password
     });
   }
 
@@ -199,6 +200,24 @@ class FirestoreService {
       'No HP': userProfile.noHP,
     });
   }
+
+  // Fungsi untuk mengecek ketersediaan userID
+  Future<bool> cekKetersediaanUsername(String userID) async {
+    String evaluatorID = FirebaseAuth.instance.currentUser!.uid;
+    String combinedUserID = evaluatorID + userID; // nama dokumen
+
+    try {
+      // Mendapatkan dokumen dengan ID yang dikombinasikan
+      final docSnapshot = await _firestore.collection('users').doc(combinedUserID).get();
+
+      // Jika dokumen tidak ada, userID tersedia
+      return !docSnapshot.exists;
+    } catch (e) {
+      print("Error checking userID availability: $e");
+      return false; // Jika terjadi error, anggap tidak tersedia
+    }
+  }
+
 
 //----------------------------------------- ambil data / fetch
 
@@ -224,23 +243,32 @@ class FirestoreService {
 
   // Fungsi untuk mengambil semua user yang diakses oleh evaluator tertentu
   Future<List<Profil>> fetchUsersAsEvaluator(String evaluatorID) async {
-    QuerySnapshot snapshot = await _firestore
-        .collection('users')
-        .where('Role', isEqualTo: 'User')
-        .where('evaluatorID', isEqualTo: evaluatorID)
-        .get();
+    print(evaluatorID);
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .where('Role', isEqualTo: 'User')
+          .where('evaluatorID', isEqualTo: evaluatorID)
+          .get();
 
-    return snapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return Profil(
-        nama: data['Nama Lengkap'],
-        tglLahir: data['Tanggal Lahir'],
-        jenisKelamin: data['Jenis Kelamin'],
-        noHP: data['No HP'],
-        role: data['Role'],
-        evaluatorID: data['evaluatorID'],
-      );
-    }).toList();
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Profil(
+          nama: data['Nama Lengkap'],
+          tglLahir: data['Tanggal Lahir'],
+          jenisKelamin: data['Jenis Kelamin'],
+          noHP: data['No HP'],
+          role: data['Role'],
+          evaluatorID: data['evaluatorID'],
+          username: data['userID'],
+          password: data['password']
+        );
+      }).toList();
+    } catch (e) {
+      // Menangani kesalahan
+      print('Error fetching users as evaluator: $e');
+      return []; // Mengembalikan list kosong jika terjadi kesalahan
+    }
   }
 
   // Fungsi untuk mengambil semua user

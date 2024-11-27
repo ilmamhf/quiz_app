@@ -2,6 +2,7 @@ import 'package:demensia_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'pages/admin_pages/admin_page.dart';
+import 'pages/evaluator_pages/evaluator_page.dart';
 import 'pages/start_pages/email_verification_page.dart';
 import 'pages/start_pages/login_page.dart';
 import 'pages/start_pages/register_page.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         "/verifypage": (_) => VerifyEmailPage(),
         "/adminpage": (_) => AdminPage(),
         "/userpage": (_) => UserPage(),
+        "/evaluatorpage": (_) => EvaluatorPage(),
       },
     );
   }

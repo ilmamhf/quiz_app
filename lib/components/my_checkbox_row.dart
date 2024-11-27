@@ -22,7 +22,7 @@ class MyCheckboxRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 3.0),
             child: Row(
               children: [
-                for (int i = 0; i < 4; i++) ...[
+                for (int i = 0; i < abcd.length; i++) ...[
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 2.0),
@@ -35,7 +35,7 @@ class MyCheckboxRow extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
                                 width: 18.0,
@@ -52,7 +52,7 @@ class MyCheckboxRow extends StatelessWidget {
                                 ),
                               ),
 
-                              Text(abcd[i]),
+                              Expanded(child: Center(child: Text(abcd[i]))),
                             ],
                           ),
                         ),

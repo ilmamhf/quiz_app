@@ -22,23 +22,15 @@ class _DatePickerState extends State<DatePicker> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.text, 
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: widget.labelColor
-            ),
-          ),
-
-          SizedBox(height: 5,),
-
           TextFormField(
             controller: widget.dateController,
             decoration: InputDecoration(
+              hintText: widget.text,
+              hintStyle: TextStyle(fontSize: 14.0),
               fillColor: Colors.white,
               filled: true,
               isDense: true,
@@ -87,6 +79,11 @@ class _DatePickerState extends State<DatePicker> {
       setState(() {
         this.widget.dateController.text = _picked.toString().split(" ")[0];
       });
-    }
+    } 
+    // else {
+    //   setState(() {
+    //     this.widget.dateController.text = widget.text;
+    //   });
+    // }
   }
 }

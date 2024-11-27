@@ -52,6 +52,15 @@ class HomePage extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
+
+              // sign in button
+              MyButton(
+                text: "Evaluator Page",
+                onTap: () => Navigator.pushReplacementNamed(context, '/evaluatorpage'),
+                size: 15,
+              ),
+
+              const SizedBox(height: 20),
                 
               // sign in button
               MyButton(

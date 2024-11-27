@@ -33,63 +33,49 @@ class _DropdownFieldState extends State<DropdownField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (widget.hintText.isNotEmpty) ...[
-            Text(
-              widget.hintText, 
-              textAlign: TextAlign.center,
-              style: TextStyle(color: widget.labelColor),
-            ),
-
-            const SizedBox(height: 5),
-          ],
-
-          DropdownSearch<String>(
-            autoValidateMode: AutovalidateMode.onUserInteraction,
-            items: widget.listString,
-            dropdownDecoratorProps: DropDownDecoratorProps(
-              dropdownSearchDecoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
-                // labelText: widget.hintText,
-                // labelStyle: TextStyle(color: Colors.grey[400]),
-                enabledBorder: const OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.shade400),
-              ),
-              fillColor: Colors.white,
-              filled: true,
-              )
-            ),
-            validator: (String? item) {
-              if (item == null)
-                return "Tidak boleh kosong";
-              else
-                return null;
-            },
-            onChanged: (newValue) {
-              setState(() {
-                _selectedItem = newValue!;
-              });
-              widget.onChange(newValue);
-            },
-            selectedItem: _selectedItem,
-            popupProps: PopupProps.menu(
-              showSearchBox: false,
-              fit: FlexFit.loose,
-              itemBuilder: (context, item, isSelected) {
-                return ListTile(
-                  title: Text(item),
-                  selected: isSelected,
-              );
-              },
-            ),
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      child: DropdownSearch<String>(
+        
+        autoValidateMode: AutovalidateMode.onUserInteraction,
+        items: widget.listString,
+        dropdownDecoratorProps: DropDownDecoratorProps(
+          dropdownSearchDecoration: InputDecoration(
+            prefixText: widget.hintText,
+            hintStyle: TextStyle(fontSize: 14.0),
+            // contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+            enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey),
           ),
-        ],
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey.shade400),
+          ),
+          // fillColor: Colors.white,
+          // filled: true,
+          )
+        ),
+        validator: (String? item) {
+          if (item == null)
+            return "Tidak boleh kosong";
+          else
+            return null;
+        },
+        onChanged: (newValue) {
+          setState(() {
+            _selectedItem = newValue!;
+          });
+          widget.onChange(newValue);
+        },
+        selectedItem: _selectedItem,
+        popupProps: PopupProps.menu(
+          showSearchBox: false,
+          fit: FlexFit.loose,
+          itemBuilder: (context, item, isSelected) {
+            return ListTile(
+              title: Text(item),
+              selected: isSelected,
+          );
+          },
+        ),
       ),
     );
   }

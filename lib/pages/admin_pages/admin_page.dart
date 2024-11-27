@@ -81,24 +81,24 @@ class _AdminPageState extends State<AdminPage> {
             )
           ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), offset: Offset(0, 3), blurRadius: 4, spreadRadius: 1)],
-            ),
-              child: IconButton(
-                color: Colors.white, 
-                icon: Icon(Icons.notifications, color: Colors.black,), 
-                onPressed: () {  },
-                highlightColor: Colors.grey.withOpacity(0.2),
-              ),
-            ),
-          ),
-        ],
+        // actions: [
+        //   Padding(
+        //     padding: const EdgeInsets.all(16.0),
+        //     child: Container(
+        //       decoration: BoxDecoration(
+        //       color: Colors.white,
+        //       shape: BoxShape.circle,
+        //       boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), offset: Offset(0, 3), blurRadius: 4, spreadRadius: 1)],
+        //     ),
+        //       child: IconButton(
+        //         color: Colors.white, 
+        //         icon: Icon(Icons.notifications, color: Colors.black,), 
+        //         onPressed: () {  },
+        //         highlightColor: Colors.grey.withOpacity(0.2),
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       backgroundColor: Color(0xFF00cfd6),
       body: SafeArea(

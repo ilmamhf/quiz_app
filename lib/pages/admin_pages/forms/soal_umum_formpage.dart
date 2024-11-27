@@ -169,11 +169,11 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                                               
                               // check apakah
                               if (
-                                soalController.text.isNotEmpty ||
-                                jawabanControllers[0].text.isNotEmpty ||
-                                jawabanControllers[1].text.isNotEmpty ||
-                                jawabanControllers[2].text.isNotEmpty ||
-                                jawabanControllers[3].text.isNotEmpty ||
+                                soalController.text.isNotEmpty &&
+                                jawabanControllers[0].text.isNotEmpty &&
+                                jawabanControllers[1].text.isNotEmpty &&
+                                jawabanControllers[2].text.isNotEmpty &&
+                                jawabanControllers[3].text.isNotEmpty &&
                                 selectedAnswerNotifier.value != -1
                                 ) {
                                 for (int i = 0; i < 4; i++) {
