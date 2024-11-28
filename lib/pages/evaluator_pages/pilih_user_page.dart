@@ -9,6 +9,7 @@ import '../../components/my_textfield.dart';
 import '../../components/small_popup.dart';
 import '../../models/profil.dart';
 import '../../services/firestore.dart';
+import 'evaluator_page.dart';
 
 class PilihUserPage extends StatefulWidget {
   const PilihUserPage({super.key});
@@ -129,6 +130,7 @@ class _PilihUserPageState extends State<PilihUserPage> {
                         // Cek apakah password cocok
                         if (selectedUser.password == passwordController.text) {
                           MySmallPopUp.showToast(message: 'Password benar!');
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => EvaluatorPage(userTerpilih: selectedUser,)));
                         } else {
                           MySmallPopUp.showToast(message: 'Password salah!');
                         }

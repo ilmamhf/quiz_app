@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,11 +10,19 @@ import '../../../components/my_checkbox_row.dart';
 import '../../../components/my_form_row.dart';
 import '../../../components/my_textfield.dart';
 import '../../../models/soal.dart';
+import '../../../services/auth_service.dart';
 import '../../../services/firestore.dart';
 import '../kumpulan_pg_umum_page.dart';
 
 class FormSoalPGUmum extends StatefulWidget {
-  const FormSoalPGUmum({super.key});
+  final String? userTerpilihID;// nama user opsional
+  final bool khusus;
+
+  const FormSoalPGUmum({
+    super.key,
+    this.userTerpilihID,
+    this.khusus = false
+  });
 
   @override
   State<FormSoalPGUmum> createState() => _FormSoalPGUmumState();
@@ -21,6 +30,7 @@ class FormSoalPGUmum extends StatefulWidget {
 
 class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
   final FirestoreService firestoreService = FirestoreService();
+  final AuthService authService = AuthService();
 
   final soalController = TextEditingController();
   final gambarController = TextEditingController();
@@ -75,13 +85,20 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
   @override
   Widget build(BuildContext context) {
 
+    String? userTerpilihID = widget.userTerpilihID;
+    bool isKhusus = widget.khusus;
+
     // double screenWidth = MediaQuery.sizeOf(context).width;
     // double screenHeight = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
       backgroundColor: Color(0xFF00cfd6),
 
-      appBar: MyAppBar(title: "Buat Soal PG Umum",),
+      appBar: MyAppBar(
+        title: isKhusus == false 
+          ? "Buat Soal PG Umum"
+          : "Buat Soal PG Khusus"
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -100,7 +117,11 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                     // judul
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Text('Silahkan buat soal pilihan ganda untuk semua user'),
+                      child: Text(
+                        isKhusus == false 
+                        ? 'Silahkan buat soal pilihan ganda untuk semua user'
+                        : 'Silahkan buat soal pilihan ganda untuk user $userTerpilihID'
+                      ),
                     ),
                 
                     const SizedBox(height: 20),
@@ -165,7 +186,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                             size: 5,
                             text: 'Simpan Soal',
                             paddingSize: 15,
-                            onTap: () { 
+                            onTap: () async { 
                                               
                               // check apakah
                               if (
@@ -189,7 +210,15 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                                               
                                 // add to db
                                 print('uploading... ');
-                                firestoreService.addSoalPGUmum(soalUmum);
+                                if (isKhusus == false) {
+                                  firestoreService.addSoalPGUmum(soalUmum, 'umum');
+                                } else {
+                                  String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
+                                  String combinedUserID = currentEvaluatorID! + userTerpilihID!;
+
+                                  firestoreService.addSoalPGUmum(soalUmum, combinedUserID);
+                                }
+                                
                                 print('soal terupload');
                                 
                                 showAlertDialog('Soal sudah terupload!');
@@ -209,7 +238,10 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                           child: MyButton(
                             size: 5,
                             text: 'Kumpulan Soal',
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => KumpulanSoalPage())), 
+                            onTap: widget.khusus == false ? 
+                              () => 
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => KumpulanSoalPage()))
+                              :() => Navigator.push(context, MaterialPageRoute(builder: (context) => KumpulanSoalPage(khusus: true, userTerpilihID: userTerpilihID,))), 
                             paddingSize: 15,
                           ),
                         ),

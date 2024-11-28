@@ -9,9 +9,16 @@ import '../../components/my_form_row.dart';
 import '../../components/my_textfield.dart';
 import '../../components/page_navigator_button.dart';
 import '../../components/soal_crud_button.dart';
+import '../../services/auth_service.dart';
 
 class KumpulanSoalPage extends StatefulWidget {
-  const KumpulanSoalPage({Key? key}) : super(key: key);
+  final String? userTerpilihID;// nama user opsional
+  final bool khusus;
+
+  const KumpulanSoalPage({Key? key, 
+  this.userTerpilihID, 
+  this.khusus = false}) 
+  : super(key: key);
 
   @override
   State<KumpulanSoalPage> createState() => _KumpulanSoalPageState();
@@ -19,7 +26,10 @@ class KumpulanSoalPage extends StatefulWidget {
 
 class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
   final FirestoreService firestoreService = FirestoreService();
-  late Future<List<SoalPG>> _soalListFuture;
+  final AuthService authService = AuthService();
+  bool isLoading = false;
+  
+  // late Future<List<SoalPG>> _soalListFuture;
   List<SoalPG> soal = [];
   PageController _controller = PageController();
   int currentPageIndex = 0;
@@ -45,7 +55,6 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
 
   int originalSelectedAnswer = 0;
 
-
   bool canEdit = false;
 
   @override
@@ -55,8 +64,27 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
   }
 
   Future<void> _fetchSoal() async {
-    List<SoalPG> fetchedSoal = await firestoreService.fetchSoalPGUmum();
     setState(() {
+      isLoading = true;
+    });
+
+    List<SoalPG> fetchedSoal = [];
+
+    if (widget.khusus == false) {
+      fetchedSoal = await firestoreService.fetchSoalPGUmum('umum');
+    } else {
+      String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
+      String combinedUserID = currentEvaluatorID! + widget.userTerpilihID!;
+
+      fetchedSoal = await firestoreService.fetchSoalPGUmum(combinedUserID);
+    }
+
+    print(fetchedSoal.length);
+
+    if (fetchedSoal.isEmpty) {
+      print('kosnng');
+    } else {
+      setState(() {
       soal = fetchedSoal;
       soalControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
       jawabanControllers = List.generate(fetchedSoal.length, (index) => List.generate(4, (i) => TextEditingController()));
@@ -78,9 +106,11 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
             break;
           }
         }
-
-        
       }
+    });
+    }
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -104,7 +134,13 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
     );
 
     // Panggil fungsi untuk memperbarui soal di Firestore
-    await firestoreService.updateSoalPGUmum(updatedSoal);
+    if (widget.khusus == false) {
+      await firestoreService.updateSoalPGUmum(updatedSoal, 'umum');
+    } else {
+      String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
+      String combinedUserID = currentEvaluatorID! + widget.userTerpilihID!;
+      await firestoreService.updateSoalPGUmum(updatedSoal, combinedUserID);
+    }
 
     // Perbarui data lokal
     setState(() {
@@ -141,9 +177,11 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
       resizeToAvoidBottomInset: false,
 
       appBar: MyAppBar(title: "Kumpulan Soal",),
-      body: soal.isEmpty
+      body: isLoading // ini harusnya is loading gak sih
           ? Center(child: CircularProgressIndicator())
-          : SafeArea(
+          : soal.isEmpty ? 
+            Text('kosong')
+            : SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -158,7 +196,10 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
                       height: screenHeight * 9/13,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: PageView.builder(
+                        child: soal.isEmpty ? 
+                        Text('Soal kosong')
+                        :
+                        PageView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           controller: _controller,
                           itemCount: soal.length,

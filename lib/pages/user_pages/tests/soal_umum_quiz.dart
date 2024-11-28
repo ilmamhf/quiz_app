@@ -1,11 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../../models/profil.dart';
 import '../../../models/soal.dart';
+import '../../../services/auth_service.dart';
 import '../../../services/firestore.dart';
 
 class SoalUmumQuiz extends StatefulWidget {
-  const SoalUmumQuiz({super.key});
+  final Profil? currentUser; // objek user sekarang
+  final bool khusus;
+
+  const SoalUmumQuiz({
+    super.key, 
+    this.currentUser,
+    this.khusus = false,
+  });
 
   @override
   State<SoalUmumQuiz> createState() => _SoalUmumQuizState();
@@ -13,6 +22,7 @@ class SoalUmumQuiz extends StatefulWidget {
 
 class _SoalUmumQuizState extends State<SoalUmumQuiz> {
   final FirestoreService _firestoreService = FirestoreService();
+  final AuthService authService = AuthService();
   
   List<SoalPG> soal = [
     // Soal(
@@ -43,7 +53,17 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
 
     // Fungsi untuk mengambil soal dari Firestore
   Future<void> _fetchSoalUmum() async {
-    List<SoalPG> fetchedSoalUmum = await _firestoreService.fetchSoalPGUmum();
+    List<SoalPG> fetchedSoalUmum = [];
+
+    if (widget.khusus == false) {
+      fetchedSoalUmum = await _firestoreService.fetchSoalPGUmum('umum');
+    } else {
+      // String currentEvaluatorID = 'hQH32HaSw0WVAZGh6AEyeBULS1c2';
+      // String? currentUserID = widget.currentUser!.username;
+      // String combinedUserID = currentEvaluatorID + currentUserID!;
+      fetchedSoalUmum = await _firestoreService.fetchSoalPGUmum('tes collection user');
+    }
+    
     setState(() {
       soal = fetchedSoalUmum;
     });

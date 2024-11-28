@@ -17,8 +17,8 @@ class FirestoreService {
     
 // ------------------------------------------- soal pilihan ganda
   // Fungsi untuk menambah soal ke Firestore
-  Future<void> addSoalPGUmum(soalUmum) async {
-    DocumentReference docRef = await _firestore.collection('soal pg umum').add({
+  Future<void> addSoalPGUmum(soalUmum, String tipe) async {
+    DocumentReference docRef = await _firestore.collection('soal pg $tipe').add({
         'Soal': soalUmum.soal,
         'Jawaban': soalUmum.listJawaban,
         'Jawaban Benar': soalUmum.jawabanBenar,
@@ -30,8 +30,8 @@ class FirestoreService {
   }
 
   // Fungsi untuk memperbarui soal di Firestore
-  Future<void> updateSoalPGUmum(SoalPG soalUmum) async {
-    await _firestore.collection('soal pg umum').doc(soalUmum.id).update({
+  Future<void> updateSoalPGUmum(SoalPG soalUmum, String tipe) async {
+    await _firestore.collection('soal pg $tipe').doc(soalUmum.id).update({
       'Soal': soalUmum.soal,
       'Jawaban': soalUmum.listJawaban,
       'Jawaban Benar': soalUmum.jawabanBenar,
@@ -50,8 +50,8 @@ class FirestoreService {
   }
 
   // Fungsi untuk mengambil soal dari Firestore dan mengembalikannya sebagai list of Soal
-  Future<List<SoalPG>> fetchSoalPGUmum() async {
-    QuerySnapshot snapshot = await _firestore.collection('soal pg umum').get();
+  Future<List<SoalPG>> fetchSoalPGUmum(String tipe) async {
+    QuerySnapshot snapshot = await _firestore.collection('soal pg $tipe').get();
     return snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return SoalPG(

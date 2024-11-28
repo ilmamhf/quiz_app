@@ -106,6 +106,15 @@ class AuthService {
       );
   }
 
-  // get nama
+  // get UID
+  Future<String?> getCurrentFirebaseUserID() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      return user?.uid; // Mengembalikan UID user jika login, atau null jika tidak
+    } catch (e) {
+      print('Error getting current Firebase user UID: $e');
+      return null; // Mengembalikan null jika terjadi kesalahan
+    }
+  }
   
 }
