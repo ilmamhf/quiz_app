@@ -7,8 +7,8 @@ class Profil {
   final String noHP;
   final String role; // Bisa 'admin', 'evaluator', atau 'user'
   String? evaluatorID = 'null'; // null untuk admin dan evaluator, berisi evaluator ID untuk user
-  String? username = 'null'; // username untuk user
-  String? password = 'null';
+  String? username = 'null'; // username untuk user saja
+  String? password = 'null'; // password untuk user saja
 
   Profil({
     required this.nama,

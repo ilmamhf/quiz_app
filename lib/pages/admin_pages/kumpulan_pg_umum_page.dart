@@ -69,7 +69,7 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
     });
 
     List<SoalPG> fetchedSoal = [];
-
+    print(widget.khusus);
     if (widget.khusus == false) {
       fetchedSoal = await firestoreService.fetchSoalPGUmum('umum');
     } else {
@@ -177,10 +177,10 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
       resizeToAvoidBottomInset: false,
 
       appBar: MyAppBar(title: "Kumpulan Soal",),
-      body: isLoading // ini harusnya is loading gak sih
+      body: isLoading
           ? Center(child: CircularProgressIndicator())
           : soal.isEmpty ? 
-            Text('kosong')
+            Center(child: Text('Belum ada soal'))
             : SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),

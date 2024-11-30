@@ -161,7 +161,7 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                         onTap: userTermonitor != null 
                         ? () => 
                         Navigator.push(context, MaterialPageRoute(builder: (context) => 
-                          FormSoalPGUmum(khusus: true, userTerpilihID: userTermonitor?.username)))
+                          FormSoalPGUmum(khusus: true, userTerpilihID: userTermonitor.username)))
                         : () {}, 
                         text: 'Buat Soal PG Khusus', 
                         size: 140,

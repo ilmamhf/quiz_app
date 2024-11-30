@@ -38,7 +38,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
   }
 
   Future<void> _fetchSoal() async {
-    List<SoalKognitif> fetchedSoal = await firestoreService.fetchSoalKognitifUmum();
+    List<SoalKognitif> fetchedSoal = await firestoreService.fetchSoalKognitifUmum('umum');
     setState(() {
       soal = fetchedSoal;
       soalControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());

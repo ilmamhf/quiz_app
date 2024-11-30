@@ -1,44 +1,43 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../components/my_appbar.dart';
+import '../../../components/my_form_row.dart';
+import '../../../components/my_textfield.dart';
 import '../../../models/profil.dart';
 import '../../../models/soal.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/firestore.dart';
 
-class SoalUmumQuiz extends StatefulWidget {
+class SoalKognitifQuiz extends StatefulWidget {
   final Profil? currentUser; // objek user sekarang
   final bool khusus;
-
-  const SoalUmumQuiz({
-    super.key, 
+  
+  const SoalKognitifQuiz({
+    super.key,
     this.currentUser,
     this.khusus = false,
   });
 
   @override
-  State<SoalUmumQuiz> createState() => _SoalUmumQuizState();
+  State<SoalKognitifQuiz> createState() => _SoalKognitifQuizState();
 }
 
-class _SoalUmumQuizState extends State<SoalUmumQuiz> {
+class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
+  
   final FirestoreService _firestoreService = FirestoreService();
   final AuthService authService = AuthService();
 
   bool isLoading = false;
   
-  List<SoalPG> soal = [];
+  List<SoalKognitif> soal = [];
 
   PageController _controller = PageController();
 
-  Map<int, String> userAnswers = {};
+  // Map<int, String> userAnswers = {};
   int currentPageIndex = 0;
 
-  void cekJawaban(int index, String jawabanUser) {
-    setState(() {
-      userAnswers[index] = jawabanUser;
-    });
-  }
+  // List<TextEditingController> soalControllers = [];
+  List<TextEditingController> jawabanUserController = [];
 
     // Fungsi untuk mengambil soal dari Firestore
   Future<void> _fetchSoalUmum() async {
@@ -46,19 +45,24 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
       isLoading = true;
     });
 
-    List<SoalPG> fetchedSoalUmum = [];
+    List<SoalKognitif> fetchedSoal = [];
 
     if (widget.khusus == false) {
-      fetchedSoalUmum = await _firestoreService.fetchSoalPGUmum('umum');
+      fetchedSoal = await _firestoreService.fetchSoalKognitifUmum('umum');
     } else {
-      // String currentEvaluatorID = 'hQH32HaSw0WVAZGh6AEyeBULS1c2';
-      // String? currentUserID = widget.currentUser!.username;
-      // String combinedUserID = currentEvaluatorID + currentUserID!;
-      fetchedSoalUmum = await _firestoreService.fetchSoalPGUmum(widget.currentUser!.evaluatorID! + widget.currentUser!.username!);
+      fetchedSoal = await _firestoreService.fetchSoalKognitifUmum(widget.currentUser!.evaluatorID! + widget.currentUser!.username!);
     }
     
     setState(() {
-      soal = fetchedSoalUmum;
+      soal = fetchedSoal;
+      // soalControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
+      jawabanUserController = List.generate(fetchedSoal.length, (index) => TextEditingController());
+
+      // // Inisialisasi controller dengan data soal
+      // for (int i = 0; i < fetchedSoal.length; i++) {
+      //   // soalControllers[i].text = fetchedSoal[i].soal;
+      //   jawabanUserController[i].text = fetchedSoal[i].jawabanBenar;
+      // }
     });
     setState(() {
       isLoading = false;
@@ -70,7 +74,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
   void hitungSkor() {
     totalSkor = 0; // Reset skor sebelum menghitung
     for (int i = 0; i < soal.length; i++) {
-      if (userAnswers[i] == soal[i].jawabanBenar) {
+      if (jawabanUserController[i].text == soal[i].jawabanBenar) {
         totalSkor++;
       }
     }
@@ -111,7 +115,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
 
     return Scaffold(
       backgroundColor: Color(0xFF00CFD6),
-      appBar: MyAppBar(title: isKhusus ? 'Soal Pilihan Ganda Umum' : 'Soal Pilihan Ganda Khusus'),
+      appBar: MyAppBar(title: isKhusus ? 'Soal Kognitif Umum' : 'Soal Kognitif Khusus'),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : soal.isEmpty ? 
@@ -196,7 +200,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
     );
   }
 
-  Widget buildSoalPage(SoalPG soal, int index) {
+  Widget buildSoalPage(SoalKognitif soal, int index) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -220,37 +224,19 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
                   ),
                 ),
               ),
-              ...soal.listJawaban.map((String jawaban) {
-                return Container(
-                  width: double.infinity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: ElevatedButton(
-                      onPressed: () => cekJawaban(index, jawaban),
-                      child: Text(jawaban, style: TextStyle(color: Colors.black),),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.grey)),
-                        backgroundColor: userAnswers[index] == jawaban
-                          ? Color(0xFF00CFD6)
-                          : Colors.white
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-              // Padding(
-              //   padding: const EdgeInsets.all(16.0),
-              //   child: Text(
-              //     userAnswers[index] == null
-              //       ? ""
-              //       : userAnswers[index] == soal.jawabanBenar
-              //         ? "Benar!"
-              //         : "Salah!",
-              //     style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-              //     textAlign: TextAlign.center,
-              //   ),
-              // )
+
+              // jawaban user
+              MyFormRow(
+                labelText: 'Jawaban',
+                myWidget: MyTextField(
+                  controller: jawabanUserController[index],
+                  hintText: 'Ketik jawaban benar di sini',
+                  obscureText: false,
+                  enabled: true,
+                ),
+              ),
+
+              const SizedBox(height: 5),
             ],
           ),
         ),

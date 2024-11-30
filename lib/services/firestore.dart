@@ -77,8 +77,8 @@ class FirestoreService {
   }
 
   // Fungsi untuk mengambil soal dari Firestore dan mengembalikannya sebagai list of Soal
-  Future<List<SoalKognitif>> fetchSoalKognitifUmum() async {
-    QuerySnapshot snapshot = await _firestore.collection('soal kognitif umum').get();
+  Future<List<SoalKognitif>> fetchSoalKognitifUmum(String tipe) async {
+    QuerySnapshot snapshot = await _firestore.collection('soal kognitif $tipe').get();
     return snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return SoalKognitif(

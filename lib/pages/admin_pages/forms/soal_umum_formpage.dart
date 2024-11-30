@@ -238,7 +238,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                           child: MyButton(
                             size: 5,
                             text: 'Kumpulan Soal',
-                            onTap: widget.khusus == false ? 
+                            onTap: isKhusus == false ? 
                               () => 
                               Navigator.push(context, MaterialPageRoute(builder: (context) => KumpulanSoalPage()))
                               :() => Navigator.push(context, MaterialPageRoute(builder: (context) => KumpulanSoalPage(khusus: true, userTerpilihID: userTerpilihID,))), 
