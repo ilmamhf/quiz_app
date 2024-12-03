@@ -10,6 +10,7 @@ import '../../components/my_button.dart';
 import '../../components/my_checkbox_row.dart';
 import '../../components/my_form_row.dart';
 import '../../components/my_textfield.dart';
+import '../../components/phone_field.dart';
 import '../../components/small_popup.dart';
 import '../../components/sub_judul.dart';
 import '../../models/profil.dart';
@@ -141,8 +142,17 @@ class TambahUserPage extends StatelessWidget {
                         controller: NoHPController,
                         hintText: 'Ketik no hp di sini',
                         obscureText: false,
+                        digitOnly: true,
                       ),
                     ),
+
+                    // // No HP
+                    // MyFormRow(
+                    //   labelText: 'No HP',
+                    //   myWidget: PhoneField(
+                    //     phoneController: NoHPController,
+                    //   ),
+                    // ),
                 
                     const SizedBox(height: 20),
                 

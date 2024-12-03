@@ -49,8 +49,8 @@ class _DropdownFieldState extends State<DropdownField> {
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: Colors.grey.shade400),
           ),
-          // fillColor: Colors.white,
-          // filled: true,
+          fillColor: Colors.white,
+          filled: true,
           )
         ),
         validator: (String? item) {

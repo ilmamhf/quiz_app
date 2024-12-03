@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 class MyTextField extends StatelessWidget {
@@ -6,6 +7,7 @@ class MyTextField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   bool enabled;
+  final bool digitOnly;
 
   MyTextField({
     super.key,
@@ -13,6 +15,7 @@ class MyTextField extends StatelessWidget {
     required this.hintText,
     required this.obscureText,
     this.enabled = true,
+    this.digitOnly = false
     });
 
   // FocusNode node = FocusNode();
@@ -41,7 +44,8 @@ class MyTextField extends StatelessWidget {
               controller: controller,
               obscureText: obscureText,
             
-              keyboardType: TextInputType.multiline,
+              keyboardType: digitOnly ? TextInputType.number : TextInputType.multiline,
+              inputFormatters: digitOnly ? [FilteringTextInputFormatter.digitsOnly] : [],
               maxLines: obscureText ? 1 : null ,
               style: TextStyle(fontSize: 14),
             

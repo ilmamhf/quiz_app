@@ -12,15 +12,19 @@ class PhoneField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('No HP', textAlign: TextAlign.left,),
+          // Text('No HP', textAlign: TextAlign.left,),
 
-          SizedBox(height: 5,),
+          // SizedBox(height: 5,),
           IntlPhoneField(
             decoration: InputDecoration(
+              // alignLabelWithHint: true,
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+              labelText: "Ketik no hp di sini",
+              labelStyle: TextStyle(fontSize: 14, color: Colors.grey),
               contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
               // labelText: 'No HP',
               // labelStyle: TextStyle(color: Colors.grey[400]),

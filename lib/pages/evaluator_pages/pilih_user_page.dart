@@ -117,7 +117,7 @@ class _PilihUserPageState extends State<PilihUserPage> {
                     labelText: 'Password',
                     myWidget: MyTextField(
                       controller: passwordController,
-                      hintText: 'Ketik soal di sini',
+                      hintText: 'Ketik password di sini',
                       obscureText: false,
                     ),
                   ),

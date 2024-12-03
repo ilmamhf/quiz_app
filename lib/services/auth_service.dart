@@ -8,39 +8,35 @@ import '../pages/start_pages/home_page.dart';
 import '../pages/start_pages/login_page.dart';
 
 class AuthService {
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // sign up
   Future<void> signup({
     required String email,
     required String password,
-    required BuildContext context
+    required BuildContext context,
   }) async {
-    
     try {
-
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
-        password: password
+        password: password,
       );
 
       await Future.delayed(const Duration(seconds: 1));
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) => const HomePage()
-        )
+          builder: (BuildContext context) => const HomePage(),
+        ),
       );
-      
-    } on FirebaseAuthException catch(e) {
+    } on FirebaseAuthException catch (e) {
       String message = '';
       if (e.code == 'weak-password') {
         message = 'The password provided is too weak.';
       } else if (e.code == 'email-already-in-use') {
         message = 'An account already exists with that email.';
       }
-       Fluttertoast.showToast(
+      Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
@@ -48,8 +44,16 @@ class AuthService {
         textColor: Colors.white,
         fontSize: 14.0,
       );
-    }
-    catch(e){
+    } catch (e) {
+      print('Error during signup: $e');
+      Fluttertoast.showToast(
+        msg: 'Terjadi kesalahan saat mendaftar.',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.SNACKBAR,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        fontSize: 14.0,
+      );
     }
   }
 
@@ -57,32 +61,29 @@ class AuthService {
   Future<void> signin({
     required String email,
     required String password,
-    required BuildContext context
+    required BuildContext context,
   }) async {
-    
     try {
-
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
-        password: password
+        password: password,
       );
 
       await Future.delayed(const Duration(seconds: 1));
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) => const HomePage()
-        )
+          builder: (BuildContext context) => const HomePage(),
+        ),
       );
-      
-    } on FirebaseAuthException catch(e) {
+    } on FirebaseAuthException catch (e) {
       String message = '';
       if (e.code == 'invalid-email') {
         message = 'No user found for that email.';
       } else if (e.code == 'invalid-credential') {
         message = 'Wrong password provided for that user.';
       }
-       Fluttertoast.showToast(
+      Fluttertoast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.SNACKBAR,
@@ -90,88 +91,112 @@ class AuthService {
         textColor: Colors.white,
         fontSize: 14.0,
       );
-    }
-    catch(e){
+    } catch (e) {
+      print('Error during signin: $e');
+      Fluttertoast.showToast(
+        msg: 'Terjadi kesalahan saat masuk.',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.SNACKBAR,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        fontSize: 14.0,
+      );
     }
   }
 
   // sign out
   Future<void> signout({
-    required BuildContext context
+    required BuildContext context,
   }) async {
-    
-    await FirebaseAuth.instance.signOut();
-    await Future.delayed(const Duration(seconds: 1));
-    Navigator.pushReplacement(
+    try {
+      await FirebaseAuth.instance.signOut();
+      await Future.delayed(const Duration(seconds: 1));
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) =>LoginPage()
-        )
+          builder: (BuildContext context) => LoginPage(),
+        ),
       );
+    } catch (e) {
+      print('Error during signout: $e');
+      Fluttertoast.showToast(
+        msg: 'Terjadi kesalahan saat keluar.',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.SNACKBAR,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+        fontSize: 14.0,
+      );
+    }
   }
 
   // get UID
   Future<String?> getCurrentFirebaseUserID() async {
     try {
-      final user = FirebaseAuth.instance.currentUser;
+      final user = FirebaseAuth.instance.currentUser ;
       return user?.uid; // Mengembalikan UID user jika login, atau null jika tidak
     } catch (e) {
       print('Error getting current Firebase user UID: $e');
       return null; // Mengembalikan null jika terjadi kesalahan
     }
   }
-  
+
   // Fake sign in function
   Future<bool> fakeSignIn(String username, String password) async {
-    print(username+password);
-    QuerySnapshot snapshot = await _firestore
+    try {
+      QuerySnapshot snapshot = await _firestore
         .collection('users')
         .where('userID', isEqualTo: username)
         .get();
 
-    // Memeriksa apakah ada dokumen yang ditemukan
-    if (snapshot.docs.isNotEmpty) {
-      final data = snapshot.docs.first.data() as Map<String, dynamic>;
-      // Memeriksa apakah password cocok
-      if (data['password'] == password) {
-        return true; // Sign in berhasil
-      } else {
-        return false; // Password salah
+      // Memeriksa apakah ada dokumen yang ditemukan
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data() as Map<String, dynamic>;
+        // Memeriksa apakah password cocok
+        if (data['password'] == password) {
+          return true; // Sign in berhasil
+        } else {
+          return false; // Password salah
+        }
       }
+      return false; // Username tidak ditemukan
+    } catch (e) {
+      print('Error during fake sign in: $e');
+      return false; // Mengembalikan false jika terjadi kesalahan
     }
-
-    return false; // Username tidak ditemukan
   }
 
   // cek username
   Future<bool> cekUsername(String username) async {
-    QuerySnapshot snapshot = await _firestore
-        .collection('users')
-        .where('userID', isEqualTo: username)
-        .get();
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .where('userID', isEqualTo: username)
+          .get();
 
-    // Memeriksa apakah ada dokumen yang ditemukan
-    if (snapshot.docs.isNotEmpty) {
-      return true;
+      // Memeriksa apakah ada dokumen yang ditemukan
+      return snapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking username: $e');
+      return false; // Mengembalikan false jika terjadi kesalahan
     }
-
-    return false; // Username tidak ditemukan
   }
 
   // cek role
   Future<bool> cekRole(String username, String role) async {
-    QuerySnapshot snapshot = await _firestore
-        .collection('users')
-        .where('userID', isEqualTo: username)
-        .where('Role', isEqualTo: role)
-        .get();
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .where('userID', isEqualTo: username)
+          .where('Role', isEqualTo: role)
+          .get();
 
-    // Memeriksa apakah ada dokumen yang ditemukan
-    if (snapshot.docs.isNotEmpty) {
-      return true;
+      // Memeriksa apakah ada dokumen yang ditemukan
+      return snapshot.docs.isNotEmpty;
+    } catch (e) {
+      print('Error checking role: $e');
+      return false; // Mengembalikan false jika terjadi kesalahan
     }
-
-    return false; // Username tidak ditemukan
   }
 
   // Function to convert Firestore document to Profil object
@@ -214,29 +239,4 @@ class AuthService {
       return null;
     }
   }
-
-  // // sign in user biasa
-  // Future<Profil?> signInAsUser () async {
-  //   QuerySnapshot snapshot = await _firestore
-  //       .collection('users')
-  //       .where('Role', isEqualTo: 'User ')
-  //       .limit(1) // Mengambil hanya satu dokumen
-  //       .get();
-
-  //   // Memeriksa apakah ada dokumen yang ditemukan
-  //   if (snapshot.docs.isNotEmpty) {
-  //     final data = snapshot.docs.first.data() as Map<String, dynamic>;
-  //     return Profil(
-  //       nama: data['Nama Lengkap'],
-  //       tglLahir: data['Tanggal Lahir'],
-  //       jenisKelamin: data['Jenis Kelamin'],
-  //       noHP: data['No HP'],
-  //       role: data['Role'],
-  //       evaluatorID: data['evaluatorID'],
-  //     );
-  //   }
-
-  //   // Mengembalikan null jika tidak ada dokumen yang ditemukan
-  //   return null;
-  // }
 }
