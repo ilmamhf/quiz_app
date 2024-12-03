@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/my_menu_card.dart';
 import '../../models/profil.dart';
 import '../../services/firestore.dart';
+import '../admin_pages/forms/soal_kognitif_umum_formpage.dart';
 import '../admin_pages/forms/soal_umum_formpage.dart';
+import '../admin_pages/list_user_page.dart';
 import '../start_pages/home_page.dart';
 import 'pilih_user_page.dart';
 import 'tambah_user_page.dart';
@@ -171,8 +174,11 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                               
                       // buat soal kognitif Khusus
                       MyMenuCard(
-                        onTap: () {} ,
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalKognitifKhusus())), 
+                        onTap: userTermonitor != null 
+                        ? () => 
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => 
+                          FormSoalKognitifUmum(khusus: true, userTerpilihID: userTermonitor.username)))
+                        : () {}, 
                         text: 'Buat Soal Kognitif Khusus',
                         size: 140,
                         cardIcon: Icon(Icons.article, size: 60,),
@@ -188,7 +194,7 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                       ),
                   
                               
-                      // List Data Evaluator
+                      // Tambah user
                       MyMenuCard(
                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TambahUserPage())), 
                         text: 'Tambah User', 
@@ -199,8 +205,8 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                               
                       // List Data User
                       MyMenuCard(
-                        onTap: () {},
-                        // Navigator.push(context, MaterialPageRoute(builder: (context) => ListUserByEvaluatorPage())), 
+                        onTap: () =>
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => ListUserPage(tipe: 'User' , evaluatorID: FirebaseAuth.instance.currentUser!.uid))), 
                         text: 'List Data User', 
                         size: 140,
                         cardIcon: Icon(Icons.people, size: 60,),

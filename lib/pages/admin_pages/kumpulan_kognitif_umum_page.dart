@@ -38,6 +38,10 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
   }
 
   Future<void> _fetchSoal() async {
+    setState(() {
+      isLoading = true;
+    });
+
     List<SoalKognitif> fetchedSoal = await firestoreService.fetchSoalKognitifUmum('umum');
     setState(() {
       soal = fetchedSoal;
@@ -49,6 +53,9 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
         soalControllers[i].text = fetchedSoal[i].soal;
         jawabanBenarControllers[i].text = fetchedSoal[i].jawabanBenar;
       }
+    });
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -96,6 +103,8 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
     });
   }
   
+  bool isLoading = true;
+  
   @override
   Widget build(BuildContext context) {
 
@@ -106,9 +115,11 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
       resizeToAvoidBottomInset: false,
 
       appBar: MyAppBar(title: "Kumpulan Soal",),
-      body: soal.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : SafeArea(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator()) // Kondisi loading
+        : soal.isEmpty
+          ? Center(child: Text("Tidak ada soal", style: TextStyle(color: Colors.white),),) // Kondisi kosong
+        : SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(

@@ -28,6 +28,7 @@ class _PilihUserPageState extends State<PilihUserPage> {
   List<Profil> fetchedUsers = [];
   List<String> usernames = [];
   List<String> usernameList = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -36,6 +37,9 @@ class _PilihUserPageState extends State<PilihUserPage> {
   }
 
   Future<void> _fetchUser() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -50,6 +54,9 @@ class _PilihUserPageState extends State<PilihUserPage> {
     } catch (e) {
       print('Error fetching users: $e');
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -63,7 +70,9 @@ class _PilihUserPageState extends State<PilihUserPage> {
         title: "Pilih User",
       ),
 
-      body: SafeArea(
+      body: isLoading
+        ? Center(child: CircularProgressIndicator()) // Kondisi loading
+      : SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Container(

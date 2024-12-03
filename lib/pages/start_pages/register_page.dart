@@ -65,7 +65,8 @@ class _RegisterPageState extends State<RegisterPage> {
             tglLahir: timestamp,
             jenisKelamin: kelaminController,
             noHP: noHPController.text,
-            role: 'Admin'
+            role: 'Admin',
+            username: emailController.text
           );
 
           FirestoreService().addAdmin(userProfile);

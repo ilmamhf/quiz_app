@@ -28,7 +28,18 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
 
     // Mengambil data yang dikirim melalui arguments
-    final Profil profil = ModalRoute.of(context)!.settings.arguments as Profil;
+    final Profil? profil = ModalRoute.of(context)!.settings.arguments as Profil?;
+
+    // Cek jika profil null dan arahkan ke halaman login
+    if (profil == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
+      });
+      return Container(); // Kembalikan widget kosong saat menunggu navigasi
+    }
     
     return Scaffold(
       appBar: AppBar(
@@ -84,27 +95,6 @@ class _UserPageState extends State<UserPage> {
             child: Center(
               child: Column(
                 children: [
-
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.white,
-                  //     borderRadius: BorderRadius.circular(12.0)
-                  //   ),
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.all(8.0),
-                  //     child: // Tampilkan teks berdasarkan kondisi
-                  //       userTermonitor == null
-                  //         ? Text(
-                  //             "Saat ini anda belum memilih user untuk dimonitor, silahkan gunakan tombol 'Pilih User' di kanan atas layar untuk memilih user",
-                  //             style: TextStyle(fontSize: 14),
-                  //           )
-                  //         : Text(
-                  //             'User terpilih: ${userTermonitor.nama}',
-                  //       style: TextStyle(fontSize: 18, color: Colors.green),
-                  //     ),
-                  //   ),
-                  // ),
-
                   Wrap(
                     alignment: WrapAlignment.spaceEvenly,
                     children: [

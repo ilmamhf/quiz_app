@@ -115,7 +115,7 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
 
     return Scaffold(
       backgroundColor: Color(0xFF00CFD6),
-      appBar: MyAppBar(title: isKhusus ? 'Soal Kognitif Umum' : 'Soal Kognitif Khusus'),
+      appBar: MyAppBar(title: isKhusus ? 'Soal Kognitif Khusus' : 'Soal Kognitif Umum'),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : soal.isEmpty ? 
@@ -129,6 +129,15 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  soal.length > 0
+                    ? Text("Soal ke ${currentPageIndex+1} dari ${soal.length} soal", 
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20
+                        ),
+                      )
+                    : SizedBox.shrink(),
+                    
                   Expanded(
                     child: PageView.builder(
                       controller: _controller,
@@ -147,17 +156,21 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Visibility(
-                        visible: currentPageIndex > 0,
+                        visible: true,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(elevation: 0),
-                            onPressed: () {
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Color(0xFF00A8AD),
+                            ),
+                            onPressed: currentPageIndex > 0 ? () {
                               _controller.previousPage(
-                                duration: Duration(milliseconds: 300), 
-                                curve: Curves.easeInOut,
-                              );
-                            }, child: Text("Soal sebelumnya", style: TextStyle(color: Colors.black),),
+                                duration: Duration(milliseconds: 1),
+                                curve: Curves.linear,
+                              ); 
+                            } : null, 
+                            child: Text("Soal sebelumnya"),
                           ),
                         ),
                       ),
@@ -167,13 +180,17 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(elevation: 0),
-                            onPressed: () {
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Color(0xFF00A8AD),
+                            ),
+                            onPressed: currentPageIndex < soal.length - 1 ? () {
                               _controller.nextPage(
-                                duration: Duration(milliseconds: 300), 
-                                curve: Curves.easeInOut,
-                              );
-                            }, child: Text("Soal selanjutnya", style: TextStyle(color: Colors.black)),
+                                duration: Duration(milliseconds: 1),
+                                curve: Curves.linear,
+                              ); 
+                            } : null, 
+                            child: Text("Soal Selanjutnya"),
                           ),
                         ),
                       ) : 
@@ -182,10 +199,13 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(elevation: 0),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Color(0xFF00A8AD),
+                            ),
                             onPressed: () {
                               tampilkanHasil(); // Panggil fungsi untuk menampilkan hasil
-                            }, child: Text("Selesai", style: TextStyle(color: Colors.black)),
+                            }, child: Text("Selesai"),
                           ),
                         ),
                       ),

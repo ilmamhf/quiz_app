@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../components/my_appbar.dart';
 import '../../components/page_navigator_button.dart';
+import '../../components/sub_judul.dart';
 import '../../components/text_display.dart';
 import '../../components/user_data_display.dart';
 import '../../models/profil.dart';
@@ -11,7 +12,14 @@ import '../../services/firestore.dart';
 import 'package:intl/intl.dart';
 
 class ListUserPage extends StatefulWidget {
-  const ListUserPage({super.key});
+  final String tipe;
+  final String? evaluatorID;
+
+  const ListUserPage({
+    super.key,
+    required this.tipe,
+    this.evaluatorID,
+  });
 
   @override
   State<ListUserPage> createState() => _ListUserPageState();
@@ -21,14 +29,7 @@ class _ListUserPageState extends State<ListUserPage> {
 
   final FirestoreService _firestoreService = FirestoreService();
 
-  List<Profil> listUser = [
-    // Profil(
-    //   nama: '',
-    //   tgl lahir: "",
-    //   jenis kelamin: "pria",
-    //   no hp: "3",
-    // ),
-  ];
+  List<Profil> listUser = [];
 
   PageController _controller = PageController();
   int currentPageIndex = 0;
@@ -46,7 +47,14 @@ class _ListUserPageState extends State<ListUserPage> {
       isLoading = true;
     });
 
-    List<Profil> fetchedListUser = await _firestoreService.fetchAllUserAsAdmin();
+    List<Profil> fetchedListUser = [];
+
+    if (widget.evaluatorID != null) {
+      fetchedListUser = await _firestoreService.fetchUsersAsEvaluator(widget.evaluatorID!);
+    } else {
+      fetchedListUser = await _firestoreService.fetchAllUserAsAdmin(widget.tipe, null);
+    }
+    
     setState(() {
       listUser = fetchedListUser;
       isLoading = false;
@@ -67,10 +75,10 @@ class _ListUserPageState extends State<ListUserPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator()) // Kondisi loading
         : listUser.isEmpty
-          ? Center(child: Text("Tidak ada user")) // Kondisi kosong
+          ? Center(child: Text("Tidak ada user", style: TextStyle(color: Colors.white),),) // Kondisi kosong
         : SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(right: 20.0, left: 20.0, top: 100.0, bottom: 200.0),
+          padding: const EdgeInsets.only(right: 20.0, left: 20.0, top: 50.0, bottom: 80.0),
           child: Column(
             children: [
 
@@ -131,6 +139,31 @@ class _ListUserPageState extends State<ListUserPage> {
           ),
 
           SizedBox(height: 20.0,),
+
+          MySubJudul(text: 'Akun :',),
+
+          const SizedBox(height: 5),
+
+          // username
+          // nama
+          MyUserDataDisplay(
+            text1: 'Nama Akun',
+            text2: user.username!
+          ),
+          
+          const SizedBox(height: 5),
+          
+          // password
+          MyUserDataDisplay(
+            text1: 'Password',
+            text2: user.password!
+          ),
+          
+          const SizedBox(height: 20),
+
+          MySubJudul(text: 'Profil :',),
+
+          const SizedBox(height: 5),
     
           // nama
           MyUserDataDisplay(

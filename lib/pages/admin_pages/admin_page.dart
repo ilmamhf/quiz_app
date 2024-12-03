@@ -141,7 +141,8 @@ class _AdminPageState extends State<AdminPage> {
             
                   // List Data Evaluator
                   MyMenuCard(
-                    onTap: () => {}, 
+                    onTap: () =>
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ListUserPage(tipe: 'Evaluator'))), 
                     text: 'List Data Evaluator', 
                     size: 140,
                     cardIcon: Icon(Icons.account_box, size: 60,),
@@ -151,7 +152,7 @@ class _AdminPageState extends State<AdminPage> {
                   // List Data User
                   MyMenuCard(
                     onTap: () => 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ListUserPage())), 
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ListUserPage(tipe: 'User'))), 
                     text: 'List Data User', 
                     size: 140,
                     cardIcon: Icon(Icons.people, size: 60,),

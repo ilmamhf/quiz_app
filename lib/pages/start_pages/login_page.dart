@@ -42,58 +42,66 @@ class _LoginPageState extends State<LoginPage> {
       }
     );
 
-    if (tipe == 'User') {
-      // cari akun user di firebase (bukan sign in)
-      bool rightUsername = await authService.cekUsername(username);
-      bool isSuccess = await authService.fakeSignIn(username, password);
+    bool rightAccountRole = await authService.cekRole(username, tipe);
 
-      if (rightUsername) {
-        if (isSuccess) {
-          print('betul');
-          // ambil profil disini
-          Profil? profil = await authService.getProfilByUsername(username);
-          
-          Navigator.pop(context); // pop the loading circle
-          // Jika login berhasil, navigasi ke halaman berikutnya
-          Navigator.pushReplacementNamed(context, '/userpage', arguments: profil);
+    if (rightAccountRole) {
+      if (tipe == 'User') {
+        // cari akun user di firebase (bukan sign in)
+        bool rightUsername = await authService.cekUsername(username);
+        bool isSuccess = await authService.fakeSignIn(username, password);
+
+        if (rightUsername) {
+          if (isSuccess) {
+            print('betul');
+            // ambil profil disini
+            Profil? profil = await authService.getProfilByUsername(username);
+            
+            Navigator.pop(context); // pop the loading circle
+            // Jika login berhasil, navigasi ke halaman berikutnya
+            Navigator.pushReplacementNamed(context, '/userpage', arguments: profil);
+          } else {
+            Navigator.pop(context); // pop the loading circle
+            // Jika login gagal, tampilkan pesan kesalahan
+            showErrorMessage('Password salah');
+          }
         } else {
           Navigator.pop(context); // pop the loading circle
           // Jika login gagal, tampilkan pesan kesalahan
-          showErrorMessage('Password salah');
+          showErrorMessage('User tidak ditemukan');
         }
       } else {
-        Navigator.pop(context); // pop the loading circle
-        // Jika login gagal, tampilkan pesan kesalahan
-        showErrorMessage('User tidak ditemukan');
-      }
-    } else {
-      // try sign in
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text, 
-        password: passwordController.text,
-        );
-        // pop the loading circle
-        Navigator.pop(context);
+        // try sign in
+        try {
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, 
+          password: passwordController.text,
+          );
+          // pop the loading circle
+          Navigator.pop(context);
 
-        Navigator.pushReplacementNamed(context, '/verifypage');
+          Navigator.pushReplacementNamed(context, '/verifypage');
 
-      } on FirebaseAuthException catch (e) {
-        // pop the loading circle
-        Navigator.pop(context);
+        } on FirebaseAuthException catch (e) {
+          // pop the loading circle
+          Navigator.pop(context);
 
-        // show error message
-        print(e.code);
-        if (e.code == 'user-not-found') {
-          showErrorMessage('Akun tidak ditemukan');
-        } else if (e.code == 'wrong-password') {
-          showErrorMessage('Password salah');
-        } else if (e.code == 'invalid-email') {
-          showErrorMessage('Email tidak valid');
-        } else if (e.code == 'too-many-requests') {
-          showErrorMessage('Terlalu banyak permintaan, silahkan coba nanti');
+          // show error message
+          print(e.code);
+          if (e.code == 'user-not-found') {
+            showErrorMessage('Akun tidak ditemukan');
+          } else if (e.code == 'wrong-password') {
+            showErrorMessage('Password salah');
+          } else if (e.code == 'invalid-email') {
+            showErrorMessage('Email tidak valid');
+          } else if (e.code == 'too-many-requests') {
+            showErrorMessage('Terlalu banyak permintaan, silahkan coba nanti');
+          }
         }
       }
+    } else {
+      showErrorMessage('Akun tidak ditemukan!');
+      // pop the loading circle
+      Navigator.pop(context);
     }
 
     // Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -230,7 +238,7 @@ class _LoginPageState extends State<LoginPage> {
                       tipeAkunTerpilih = tipeAkun[selectedAnswerNotifier.value];
                       String accountName = emailController.text;
                       String password = passwordController.text;
-                        
+
                       if (tipeAkunTerpilih == 'Admin') {
                         if (passwordAdminController.text == 'admin') {
                           print('admin');

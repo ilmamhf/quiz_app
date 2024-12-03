@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../components/big_popup.dart';
@@ -10,7 +11,14 @@ import '../../../services/firestore.dart';
 import '../kumpulan_kognitif_umum_page.dart';
 
 class FormSoalKognitifUmum extends StatelessWidget {
-  const FormSoalKognitifUmum({super.key});
+  final String? userTerpilihID;// nama user opsional
+  final bool khusus;
+
+  const FormSoalKognitifUmum({
+    super.key,
+    this.userTerpilihID,
+    this.khusus = false
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +27,9 @@ class FormSoalKognitifUmum extends StatelessWidget {
 
     final soalController = TextEditingController();
     final jawabanBenarController = TextEditingController();
+
+    String? userTerpilihID = this.userTerpilihID;
+    bool isKhusus = this.khusus;
 
     return Scaffold(
       backgroundColor: Color(0xFF00cfd6),
@@ -57,7 +68,14 @@ class FormSoalKognitifUmum extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // judul
-                    Text('Silahkan buat soal kognitif untuk semua user'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Text(
+                        isKhusus == false 
+                        ? 'Silahkan buat soal kognitif untuk semua user'
+                        : 'Silahkan buat soal kognitif untuk user $userTerpilihID'
+                      ),
+                    ),
                 
                     const SizedBox(height: 20),
                 
@@ -107,7 +125,7 @@ class FormSoalKognitifUmum extends StatelessWidget {
                             size: 5,
                             text: 'Simpan Soal',
                             paddingSize: 15,
-                            onTap: () { 
+                            onTap: () async { 
                                           
                               // check apakah
                               if (
@@ -123,7 +141,14 @@ class FormSoalKognitifUmum extends StatelessWidget {
                                           
                                 // add to db
                                 print('uploading... ');
-                                firestoreService.addSoalKognitifUmum(soalKognitifUmum);
+                                if (isKhusus == false) {
+                                  firestoreService.addSoalKognitifUmum(soalKognitifUmum, 'umum');
+                                } else {
+                                  String? currentEvaluatorID = await FirebaseAuth.instance.currentUser!.uid;
+                                  String combinedUserID = currentEvaluatorID + userTerpilihID!;
+
+                                  firestoreService.addSoalKognitifUmum(soalKognitifUmum, combinedUserID);
+                                }
                                 print('soal terupload');
                                 
                                 MyBigPopUp.showAlertDialog(context: context, teks: 'Soal kognitif umum sudah terupload!');

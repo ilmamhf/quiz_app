@@ -65,8 +65,8 @@ class FirestoreService {
 
 // ------------------------------------------- soal kognitif
   // Fungsi untuk menambah soal ke Firestore
-  Future<void> addSoalKognitifUmum(SoalKognitif soalKognitifUmum) async {
-    DocumentReference docRef = await _firestore.collection('soal kognitif umum').add({
+  Future<void> addSoalKognitifUmum(SoalKognitif soalKognitifUmum, String tipe) async {
+    DocumentReference docRef = await _firestore.collection('soal kognitif $tipe').add({
       'Soal': soalKognitifUmum.soal,
       'Jawaban Benar': soalKognitifUmum.jawabanBenar
     });
@@ -272,10 +272,10 @@ class FirestoreService {
   }
 
   // Fungsi untuk mengambil semua user
-  Future<List<Profil>> fetchAllUserAsAdmin() async {
+  Future<List<Profil>> fetchAllUserAsAdmin(String tipe, String? evaluatorID) async {
     QuerySnapshot snapshot = await _firestore
         .collection('users')
-        .where('Role', isEqualTo: 'User')
+        .where('Role', isEqualTo: tipe)
         .get();
 
     return snapshot.docs.map((doc) {
@@ -286,7 +286,9 @@ class FirestoreService {
         jenisKelamin: data['Jenis Kelamin'],
         noHP: data['No HP'],
         role: data['Role'],
-        evaluatorID: data['evaluatorID'], // Evaluator tidak memiliki evaluatorID
+        evaluatorID: data['evaluatorID'] ?? '-', // Evaluator tidak memiliki evaluatorID
+        username: data['userID'],
+        password: data['password'] ?? '-'
       );
     }).toList();
   }
@@ -294,20 +296,25 @@ class FirestoreService {
 
   // get nama
   Future<String> getFullName() async {
-    User? currentUser  = FirebaseAuth.instance.currentUser ;
-    if (currentUser  != null) {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .get();
+    try {
+      User? currentUser  = FirebaseAuth.instance.currentUser ;
+      if (currentUser  != null) {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser .uid)
+            .get();
 
-      if (userDoc.exists) {
-        return userDoc['Nama Lengkap'] ?? 'Nama tidak tersedia';
+        if (userDoc.exists) {
+          return userDoc['Nama Lengkap'] ?? 'Nama tidak tersedia';
+        } else {
+          return 'Dokumen tidak ditemukan';
+        }
       } else {
-        return 'Dokumen tidak ditemukan';
+        return 'Pengguna tidak terautentikasi';
       }
-    } else {
-      return 'Pengguna tidak terautentikasi';
+    } catch (e) {
+      // Menangkap kesalahan dan mengembalikan pesan kesalahan
+      return 'Tidak Ada Koneksi!';
     }
   }
 

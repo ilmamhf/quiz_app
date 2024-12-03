@@ -47,6 +47,15 @@ class MyPageNavigatorButton extends StatelessWidget {
                     ),
                   ),
                 ),
+
+                pageLength > 0
+                  ? Text("${currentPageIndex+1}/$pageLength", 
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20
+                      ),
+                    )
+                  : SizedBox.shrink(),
                             
                 // tombol ke soal selanjutnya
                 Visibility(

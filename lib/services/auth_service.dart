@@ -143,11 +143,27 @@ class AuthService {
     return false; // Username tidak ditemukan
   }
 
-  // Fake sign in function
+  // cek username
   Future<bool> cekUsername(String username) async {
     QuerySnapshot snapshot = await _firestore
         .collection('users')
         .where('userID', isEqualTo: username)
+        .get();
+
+    // Memeriksa apakah ada dokumen yang ditemukan
+    if (snapshot.docs.isNotEmpty) {
+      return true;
+    }
+
+    return false; // Username tidak ditemukan
+  }
+
+  // cek role
+  Future<bool> cekRole(String username, String role) async {
+    QuerySnapshot snapshot = await _firestore
+        .collection('users')
+        .where('userID', isEqualTo: username)
+        .where('Role', isEqualTo: role)
         .get();
 
     // Memeriksa apakah ada dokumen yang ditemukan

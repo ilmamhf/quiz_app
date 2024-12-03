@@ -180,7 +180,7 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : soal.isEmpty ? 
-            Center(child: Text('Belum ada soal'))
+            Center(child: Text('Tidak ada soal', style: TextStyle(color: Colors.white)))
             : SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
