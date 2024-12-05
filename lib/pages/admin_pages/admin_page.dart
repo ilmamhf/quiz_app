@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../components/home_appbar.dart';
 import '../../components/my_menu_card.dart';
+import '../../models/profil.dart';
+import '../../services/auth_service.dart';
 import '../../services/firestore.dart';
 import 'forms/soal_kognitif_umum_formpage.dart';
 import 'forms/soal_umum_formpage.dart';
-import '../start_pages/home_page.dart';
+import '../common_pages/home_page.dart';
 import 'list_user_page.dart';
 
 class AdminPage extends StatefulWidget {
@@ -15,20 +19,30 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  // get nama----
-  String fullName = 'loading..';
-  final FirestoreService firestoreService = FirestoreService();
+  final AuthService authService = AuthService();
+  bool adaUser = false;
+  Profil? userSaatIni = null;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    getFullName();
+    getProfil();
   }
 
-  Future<void> getFullName() async {
-    String name = await firestoreService.getFullName();
+  Future<void> getProfil() async {
     setState(() {
-      fullName = name;
+      isLoading = true;
+    });
+    // String name = await firestoreService.getFullName();
+    // // setState(() {
+    // //   fullName = name;
+    // // });
+
+    Profil? profil = await authService.getProfilByUsername(FirebaseAuth.instance.currentUser!.email!);
+    setState(() {
+      userSaatIni = profil;
+      isLoading = false;
     });
   }
   // -------
@@ -36,70 +50,10 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFF00cfd6),
-        toolbarHeight: 100,
-        leadingWidth: 100,
-        titleSpacing: 0,
-        scrolledUnderElevation: 0,
-        // bottom: PreferredSize(
-        //   preferredSize: const Size.fromHeight(4.0),
-        //   child: Container(
-        //       color: Color(0xAF00A8AD),
-        //       height: 1.0,
-        //   )),
-        leading: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.person, size: 40,)),
-        ),
-        title: Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Halo👋', style: TextStyle(fontSize: 14),),
-
-                const SizedBox(height: 5),
-
-                Text(fullName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),)
-              ],
-            ),
-
-            const SizedBox(width: 14),
-
-            Container(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
-                child: Text('Admin', style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold),),
-              ),
-              decoration: BoxDecoration(
-                color: Color(0xFF99FCFF),
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), offset: Offset(0, 0), blurRadius: 4, spreadRadius: 2)]
-              ),
-            )
-          ],
-        ),
-        // actions: [
-        //   Padding(
-        //     padding: const EdgeInsets.all(16.0),
-        //     child: Container(
-        //       decoration: BoxDecoration(
-        //       color: Colors.white,
-        //       shape: BoxShape.circle,
-        //       boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), offset: Offset(0, 3), blurRadius: 4, spreadRadius: 1)],
-        //     ),
-        //       child: IconButton(
-        //         color: Colors.white, 
-        //         icon: Icon(Icons.notifications, color: Colors.black,), 
-        //         onPressed: () {  },
-        //         highlightColor: Colors.grey.withOpacity(0.2),
-        //       ),
-        //     ),
-        //   ),
-        // ],
-      ),
+    return isLoading ? 
+        Center(child: CircularProgressIndicator(),)
+      : Scaffold(
+      appBar: HomeAppbar(profil: userSaatIni!,),
       backgroundColor: Color(0xFF00cfd6),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -173,41 +127,42 @@ class _AdminPageState extends State<AdminPage> {
           ),
         ),
       ),
-      floatingActionButton: Container(
-        width: 100,
-        height: 100,
-        // decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-        child: FloatingActionButton(
-          onPressed: () {}, 
-          child: Icon(Icons.auto_graph, size: 40, ), 
-          shape: CircleBorder(),
-          backgroundColor: Color(0xFF68F1F6),
-          foregroundColor: Colors.white,
-        )
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        elevation: 0,
-        // notchMargin: 5.0,
-        // shape: CircularNotchedRectangle(),
-        color: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              onPressed: () {}, 
-              icon: Icon(Icons.home),
-              highlightColor: Color(0xFF68F1F6),
-            ),
 
-            IconButton(
-              onPressed: () {}, 
-              icon: Icon(Icons.person),
-              highlightColor: Color(0xFF68F1F6),
-            ),
-          ],
-        ),
-      ),
+      // floatingActionButton: Container(
+      //   width: 100,
+      //   height: 100,
+      //   // decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+      //   child: FloatingActionButton(
+      //     onPressed: () {}, 
+      //     child: Icon(Icons.auto_graph, size: 40, ), 
+      //     shape: CircleBorder(),
+      //     backgroundColor: Color(0xFF68F1F6),
+      //     foregroundColor: Colors.white,
+      //   )
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // bottomNavigationBar: BottomAppBar(
+      //   elevation: 0,
+      //   // notchMargin: 5.0,
+      //   // shape: CircularNotchedRectangle(),
+      //   color: Colors.white,
+      //   child: Row(
+      //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //     children: [
+      //       IconButton(
+      //         onPressed: () {}, 
+      //         icon: Icon(Icons.home),
+      //         highlightColor: Color(0xFF68F1F6),
+      //       ),
+
+      //       IconButton(
+      //         onPressed: () {}, 
+      //         icon: Icon(Icons.person),
+      //         highlightColor: Color(0xFF68F1F6),
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

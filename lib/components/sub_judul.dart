@@ -13,7 +13,7 @@ class MySubJudul extends StatelessWidget {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 13.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Container(
           // color: Colors.red,
           child: Text(

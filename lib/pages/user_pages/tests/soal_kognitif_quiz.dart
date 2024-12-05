@@ -7,6 +7,7 @@ import '../../../models/profil.dart';
 import '../../../models/soal.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/firestore.dart';
+import '../nilai_page.dart';
 
 class SoalKognitifQuiz extends StatefulWidget {
   final Profil? currentUser; // objek user sekarang
@@ -119,7 +120,7 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : soal.isEmpty ? 
-            Center(child: Text('Belum ada soal'))
+            Center(child: Text('Belum ada soal', style: TextStyle(color: Colors.white),))
             : SafeArea(
         child: Center(
           child: Padding(
@@ -204,7 +205,10 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
                               foregroundColor: Color(0xFF00A8AD),
                             ),
                             onPressed: () {
-                              tampilkanHasil(); // Panggil fungsi untuk menampilkan hasil
+                              // tampilkanHasil(); // Panggil fungsi untuk menampilkan hasil
+                              hitungSkor();
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => 
+                                NilaiPage(jawabanBenar: totalSkor, jumlahSoal: soal.length)));
                             }, child: Text("Selesai"),
                           ),
                         ),

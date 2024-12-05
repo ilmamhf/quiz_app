@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../models/profil.dart';
-import '../pages/start_pages/home_page.dart';
-import '../pages/start_pages/login_page.dart';
+import '../pages/common_pages/home_page.dart';
+import '../pages/common_pages/login_page.dart';
 
 class AuthService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

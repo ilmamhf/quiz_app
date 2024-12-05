@@ -24,12 +24,23 @@ class MyUserDataDisplay extends StatelessWidget {
 
           Text(':'),
       
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 5.0),
-            child: Container(
-              child: Text(text2, style: TextStyle(fontSize: 16.0),),
+          Expanded( // Menggunakan Expanded untuk memberikan ruang yang cukup
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: 100.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Container(
+                  child: Text(
+                    text2,
+                    style: TextStyle(fontSize: 16.0),
+                    maxLines: null, // Biarkan teks menjadi multiline
+                    softWrap: true, // Izinkan teks untuk membungkus
+                  ),
+                ),
+              ),
             ),
           ),
+
         ],
       ),
     );

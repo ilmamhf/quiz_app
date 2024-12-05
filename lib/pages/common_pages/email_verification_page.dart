@@ -96,7 +96,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Pesan verifikasi email anda telah dikirim, silahkan verifikasi email anda terlebih dahulu.',
+                'Pesan verifikasi email anda telah dikirim, silahkan cek email anda',
                 style: TextStyle(fontSize: 20),
                 textAlign: TextAlign.center,
               ),

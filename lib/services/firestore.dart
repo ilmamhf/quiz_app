@@ -133,16 +133,16 @@ class FirestoreService {
     }
   }
 
-  // Fungsi untuk menambah admin
-  Future<void> addAdmin(Profil userProfile) async {
+  // Fungsi untuk menambah user admin/evaluator
+  Future<void> addUser(Profil userProfile) async {
     try {
       await _firestore.collection('users').doc(FirebaseAuth.instance.currentUser !.uid).set({
         'Nama Lengkap': userProfile.nama,
         'Tanggal Lahir': userProfile.tglLahir,
         'Jenis Kelamin': userProfile.jenisKelamin,
         'No HP': userProfile.noHP,
-        'Role': 'Admin',
-        'evaluatorID': null,
+        'Role': userProfile.role,
+        // 'evaluatorID': null,
       });
     } catch (e) {
       print('Gagal menambah admin: $e');
@@ -343,6 +343,36 @@ class FirestoreService {
     } catch (e) {
       // Menangkap kesalahan dan mengembalikan pesan kesalahan
       return 'Tidak Ada Koneksi!';
+    }
+  }
+
+  // Fungsi untuk mengambil profil user saat ini berdasarkan userID
+  Future<Profil?> fetchCurrentUserProfile(String userID) async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .where('userID', isEqualTo: userID)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        final data = snapshot.docs.first.data() as Map<String, dynamic>;
+        return Profil(
+          nama: data['Nama Lengkap'],
+          tglLahir: data['Tanggal Lahir'],
+          jenisKelamin: data['Jenis Kelamin'],
+          noHP: data['No HP'],
+          role: data['Role'],
+          evaluatorID: data['evaluatorID'] ?? '',
+          username: data['userID'],
+          password: data['password'] ?? '',
+        );
+      } else {
+        print('User  not found');
+        return null; // Mengembalikan null jika user tidak ditemukan
+      }
+    } catch (e) {
+      print('Error fetching current user profile: $e');
+      return null; // Mengembalikan null jika terjadi kesalahan
     }
   }
 }

@@ -3,9 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'pages/admin_pages/admin_page.dart';
 import 'pages/evaluator_pages/evaluator_page.dart';
-import 'pages/start_pages/email_verification_page.dart';
-import 'pages/start_pages/login_page.dart';
-import 'pages/start_pages/register_page.dart';
+import 'pages/common_pages/email_verification_page.dart';
+import 'pages/common_pages/login_page.dart';
+import 'pages/common_pages/register_page.dart';
 import 'pages/user_pages/user_page.dart';
 
 Future<void> main() async {
