@@ -86,7 +86,8 @@ class _AdminPageState extends State<AdminPage> {
             
                   // buat soal video umum
                   MyMenuCard(
-                    onTap: () => {}, 
+                    onTap: () => {},
+                    // Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalKognitifUmum(isVideo: true,))),  
                     text: 'Buat Soal Video Umum', 
                     size: 140,
                     cardIcon: Icon(Icons.videocam, size: 60,),

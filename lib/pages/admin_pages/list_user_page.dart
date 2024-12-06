@@ -75,7 +75,7 @@ class _ListUserPageState extends State<ListUserPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator()) // Kondisi loading
         : listUser.isEmpty
-          ? Center(child: Text("Tidak ada user", style: TextStyle(color: Colors.white),),) // Kondisi kosong
+          ? Center(child: Text("Tidak ada ${widget.tipe}", style: TextStyle(color: Colors.white),),) // Kondisi kosong
         : SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(right: 20.0, left: 20.0, top: 50.0, bottom: 80.0),
@@ -133,8 +133,8 @@ class _ListUserPageState extends State<ListUserPage> {
         children: [
           // judul
           Text(
-            "User ${index + 1}",
-            style: TextStyle(fontSize: 60.0),
+            "${widget.tipe} ${index + 1}",
+            style: TextStyle(fontSize: 40.0),
             textAlign: TextAlign.center,
           ),
 

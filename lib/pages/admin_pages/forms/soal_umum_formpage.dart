@@ -1,14 +1,20 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../components/big_popup.dart';
 import '../../../components/my_appbar.dart';
 import '../../../components/my_button.dart';
 import '../../../components/my_checkbox_row.dart';
 import '../../../components/my_form_row.dart';
+import '../../../components/my_image_picker.dart';
 import '../../../components/my_textfield.dart';
+import '../../../components/small_popup.dart';
 import '../../../models/soal.dart';
 import '../../../services/auth_service.dart';
 import '../../../services/firestore.dart';
@@ -48,39 +54,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
   bool isChecked = false;
   ValueNotifier<int> selectedAnswerNotifier = ValueNotifier<int>(-1);
 
-  // error message popup
-  void showErrorMessage(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0
-    );
-  }
-
-  void showAlertDialog(String teks) {
-    // Show Alert message if parsing fails
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            teks, 
-            textAlign: TextAlign.center,
-            textScaler: TextScaler.linear(1),),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  File? _selectedImage;
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +76,7 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(8.0),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.0),
@@ -140,11 +114,13 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                 
                     // gambar
                     MyFormRow(
-                      labelText: 'Gambar',
-                      myWidget: MyTextField(
-                        controller: gambarController,
-                        hintText: 'Fitur upload gambar gabisa di web',
-                        obscureText: false,
+                      labelText: "Gambar", 
+                      myWidget: MyImagePicker(
+                        onImageSelected: (File? image) {
+                          setState(() {
+                            _selectedImage = image;
+                          });
+                        },
                       ),
                     ),
                 
@@ -201,7 +177,6 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                                   listJawaban[i] = jawabanControllers[i].text;
                                 }
                                 SoalPG soalUmum = SoalPG(
-                                  // level: levelController,
                                   soal: soalController.text,
                                   // gambar: 'Belum ada gambar',
                                   listJawaban: listJawaban,
@@ -221,14 +196,17 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                                 
                                 print('soal terupload');
                                 
-                                showAlertDialog('Soal sudah terupload!');
+                                MyBigPopUp.showAlertDialog(
+                                  teks: 'Soal sudah terupload!', 
+                                  context: context,
+                                );
                                               
                                 // Navigator.push(context, MaterialPageRoute(
                                 //   builder: (context) => SelesaiBuatSoalUmumPage()
                                 // )
                                 // );
                               } else {
-                                showErrorMessage('Soal tidak valid!');
+                                MySmallPopUp.showToast(message: 'Soal tidak valid!');
                               }
                             },
                           ),

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../../components/my_appbar.dart';
 import '../../../models/profil.dart';
@@ -110,6 +111,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
   Widget build(BuildContext context) {
 
     double screenHeight = MediaQuery.sizeOf(context).height;
+    double screenWidth = MediaQuery.of(context).size.width;
     bool isKhusus = widget.khusus;
 
     return Scaffold(
@@ -122,7 +124,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
             : SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(8.0),
             child: Container(
               height: screenHeight * 9/13,
               child: Column(
@@ -139,6 +141,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
                     
                   Expanded(
                     child: PageView.builder(
+                      
                       controller: _controller,
                       itemCount: soal.length,
                       onPageChanged: (index) {
@@ -169,11 +172,11 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
                                 curve: Curves.linear,
                               ); 
                             } : null, 
-                            child: Text("Soal sebelumnya"),
+                            child: Text("Soal Sebelumnya"),
                           ),
                         ),
                       ),
-              
+                                
                       currentPageIndex != soal.length - 1 ? Visibility(
                         visible: currentPageIndex < soal.length - 1,
                         child: Padding(
@@ -253,7 +256,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: ElevatedButton(
                       onPressed: () => cekJawaban(index, jawaban),
-                      child: Text(jawaban, style: TextStyle(color: Colors.black),),
+                      child: Text(jawaban, style: TextStyle(color: Colors.black, fontWeight: FontWeight.normal),),
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.grey)),

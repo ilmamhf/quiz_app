@@ -124,7 +124,7 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
             : SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(8.0),
             child: Container(
               height: screenHeight * 9/13,
               child: Column(

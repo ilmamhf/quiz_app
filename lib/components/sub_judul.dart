@@ -17,7 +17,7 @@ class MySubJudul extends StatelessWidget {
         child: Container(
           // color: Colors.red,
           child: Text(
-            text, style: TextStyle(fontWeight: FontWeight.bold),
+            text, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
           ),
         ),
       ),

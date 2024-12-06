@@ -20,7 +20,7 @@ class HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
 
     // Batasi panjang nama yang ditampilkan
-    String displayName = profil.nama.length > 15 ? profil.nama.substring(0, 12) + '...' : profil.nama;
+    String displayName = profil.nama.length > 10 ? profil.nama.substring(0, 7) + '...' : profil.nama;
 
     return AppBar(
       backgroundColor: Color(0xFF00cfd6),

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 import '../../components/my_appbar.dart';
+import '../../components/my_form_row.dart';
+import '../../components/my_textfield.dart';
 import '../../components/sub_judul.dart';
 import '../../components/user_data_display.dart';
 import '../../models/profil.dart';
@@ -24,6 +27,7 @@ class _ProfilPageState extends State<ProfilPage> {
   // final FirestoreService _firestoreService = FirestoreService();
 
   bool isLoading = false;
+  TextEditingController namaController = TextEditingController();
   // Profil? user = profil;
 
   String dateFormatter(timestamp){
@@ -67,7 +71,7 @@ class _ProfilPageState extends State<ProfilPage> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 50.0, vertical: 100.0),
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 80.0),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -118,6 +122,20 @@ class _ProfilPageState extends State<ProfilPage> {
                     text1: 'Nama Lengkap',
                     text2: widget.profil.nama,
                   ),
+
+                  // nama
+                  // Transform.scale(
+                  //   scale: 1,
+                  //   child: MyFormRow(
+                  //     labelText: 'Nama',
+                  //     myWidget: MyTextField(
+                  //       controller: namaController,
+                  //       hintText: widget.profil.nama,
+                  //       obscureText: false,
+                  //       enabled: false,
+                  //     ),
+                  //   ),
+                  // ),
                     
                   const SizedBox(height: 20),
                 

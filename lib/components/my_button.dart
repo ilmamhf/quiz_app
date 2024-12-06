@@ -5,13 +5,15 @@ class MyButton extends StatelessWidget {
   final String text;
   final double size;
   final double paddingSize;
+  final double fontSize;
 
   const MyButton({
     super.key, 
     required this.onTap, 
     required this.text,
     required this.size,
-    this.paddingSize = 100.0
+    this.paddingSize = 100.0,
+    this.fontSize = 16.0
   });
 
   @override
@@ -30,7 +32,7 @@ class MyButton extends StatelessWidget {
             text,
             style: TextStyle(
               color: Colors.white,
-              fontSize: 16,
+              fontSize: fontSize,
             ),
           ),
         ),

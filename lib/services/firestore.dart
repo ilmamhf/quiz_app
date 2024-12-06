@@ -16,6 +16,8 @@ class FirestoreService {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  
+
   // ------------------------------------------- soal pilihan ganda
   // Fungsi untuk menambah soal ke Firestore
   Future<void> addSoalPGUmum(soalUmum, String tipe) async {
@@ -121,9 +123,9 @@ class FirestoreService {
   }
 
   // Fungsi untuk memperbarui soal di Firestore
-  Future<void> updateSoalKognitifUmum(SoalKognitif soalUmum) async {
+  Future<void> updateSoalKognitifUmum(SoalKognitif soalUmum, String tipe) async {
     try {
-      await _firestore.collection('soal kognitif umum').doc(soalUmum.id).update({
+      await _firestore.collection('soal kognitif $tipe').doc(soalUmum.id).update({
         'Soal': soalUmum.soal,
         'Jawaban Benar': soalUmum.jawabanBenar,
       });

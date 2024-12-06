@@ -83,11 +83,11 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
         profil: userSaatIni!,
         actions: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
             ),
             onPressed: () async {

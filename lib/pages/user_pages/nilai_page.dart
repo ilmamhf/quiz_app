@@ -81,6 +81,7 @@ class NilaiPage extends StatelessWidget {
                 MyButton(
                   text: 'Halaman Utama',
                   size: 5,
+                  paddingSize: 20,
                   onTap: () {
                     Navigator.popUntil(context, ModalRoute.withName('/userpage'));
                   },

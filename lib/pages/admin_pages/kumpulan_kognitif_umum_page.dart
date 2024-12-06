@@ -8,10 +8,18 @@ import '../../components/my_textfield.dart';
 import '../../components/page_navigator_button.dart';
 import '../../components/soal_crud_button.dart';
 import '../../models/soal.dart';
+import '../../services/auth_service.dart';
 import '../../services/firestore.dart';
 
 class KumpulanSoalKognitifPage extends StatefulWidget {
-  const KumpulanSoalKognitifPage({super.key});
+  final String? userTerpilihID;// nama user opsional
+  final bool khusus;
+
+  const KumpulanSoalKognitifPage({
+    super.key,
+    this.userTerpilihID, 
+    this.khusus = false,
+  });
 
   @override
   State<KumpulanSoalKognitifPage> createState() => _KumpulanSoalKognitifPageState();
@@ -20,6 +28,7 @@ class KumpulanSoalKognitifPage extends StatefulWidget {
 class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
   
   final FirestoreService firestoreService = FirestoreService();
+  final AuthService authService = AuthService();
   
   List<SoalKognitif> soal = [];
 
@@ -42,8 +51,21 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
       isLoading = true;
     });
 
-    List<SoalKognitif> fetchedSoal = await firestoreService.fetchSoalKognitifUmum('umum');
-    setState(() {
+    List<SoalKognitif> fetchedSoal = [];
+
+    if (widget.khusus == false) {
+      fetchedSoal = await firestoreService.fetchSoalKognitifUmum('umum');
+    } else {
+      String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
+      String combinedUserID = currentEvaluatorID! + widget.userTerpilihID!;
+
+      fetchedSoal = await firestoreService.fetchSoalKognitifUmum(combinedUserID);
+    }
+
+    if (fetchedSoal.isEmpty) {
+      print('kosnng');
+    } else {
+      setState(() {
       soal = fetchedSoal;
       soalControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
       jawabanBenarControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
@@ -54,6 +76,8 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
         jawabanBenarControllers[i].text = fetchedSoal[i].jawabanBenar;
       }
     });
+    }
+    
     setState(() {
       isLoading = false;
     });
@@ -78,7 +102,13 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
     );
 
     // Panggil fungsi untuk memperbarui soal di Firestore
-    await firestoreService.updateSoalKognitifUmum(updatedSoal);
+    if (widget.khusus == false) {
+      await firestoreService.updateSoalKognitifUmum(updatedSoal, 'umum');
+    } else {
+      String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
+      String combinedUserID = currentEvaluatorID! + widget.userTerpilihID!;
+      await firestoreService.updateSoalKognitifUmum(updatedSoal, combinedUserID);
+    }
 
     // Perbarui data lokal
     setState(() {
@@ -121,7 +151,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
           ? Center(child: Text("Tidak ada soal", style: TextStyle(color: Colors.white),),) // Kondisi kosong
         : SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [

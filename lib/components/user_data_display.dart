@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class MyUserDataDisplay extends StatelessWidget {
   final String text1;
@@ -12,37 +13,34 @@ class MyUserDataDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            width: 136,
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Text(text1, style: TextStyle(fontSize: 16.0),),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start, // Menjaga alignment vertikal
+      children: [
+        Container(
+          width: 120,
+          padding: EdgeInsets.symmetric(horizontal: 10.0),
+          child: Text(
+            text1,
+            style: TextStyle(fontSize: 14.0),
           ),
-
-          Text(':'),
-      
-          Expanded( // Menggunakan Expanded untuk memberikan ruang yang cukup
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 100.0),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                child: Container(
-                  child: Text(
-                    text2,
-                    style: TextStyle(fontSize: 16.0),
-                    maxLines: null, // Biarkan teks menjadi multiline
-                    softWrap: true, // Izinkan teks untuk membungkus
-                  ),
-                ),
+        ),
+        Text(':'),
+        Expanded( // Menggunakan Expanded untuk mengizinkan Container mengisi ruang yang tersisa
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Container(
+              // Hapus batasan tinggi dan biarkan Container menyesuaikan tinggi
+              child: Text(
+                text2,
+                style: TextStyle(fontSize: 14.0),
+                maxLines: 2, // Biarkan teks menjadi multiline tanpa batasan
+                softWrap: true, // Izinkan teks untuk membungkus
               ),
             ),
           ),
-
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
