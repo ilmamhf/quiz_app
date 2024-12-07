@@ -9,6 +9,7 @@ import '../../services/firestore.dart';
 import 'forms/soal_kognitif_umum_formpage.dart';
 import 'forms/soal_umum_formpage.dart';
 import '../common_pages/home_page.dart';
+import 'forms/soal_video_page.dart';
 import 'list_user_page.dart';
 
 class AdminPage extends StatefulWidget {
@@ -76,8 +77,10 @@ class _AdminPageState extends State<AdminPage> {
             
                   // buat soal kognitif umum
                   MyMenuCard(
-                    onTap: () => 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalKognitifUmum())), 
+                    onTap: () {
+                      print('oi');
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalKognitifUmum()));
+                    },
                     text: 'Buat Soal Kognitif Umum',
                     size: 140,
                     cardIcon: Icon(Icons.article, size: 60,),
@@ -86,8 +89,9 @@ class _AdminPageState extends State<AdminPage> {
             
                   // buat soal video umum
                   MyMenuCard(
-                    onTap: () => {},
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalKognitifUmum(isVideo: true,))),  
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalVideoUmum()));
+                    },
                     text: 'Buat Soal Video Umum', 
                     size: 140,
                     cardIcon: Icon(Icons.videocam, size: 60,),

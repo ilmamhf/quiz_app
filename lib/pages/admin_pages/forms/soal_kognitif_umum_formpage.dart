@@ -18,13 +18,13 @@ import '../kumpulan_kognitif_umum_page.dart';
 class FormSoalKognitifUmum extends StatefulWidget {
   final String? userTerpilihID;// nama user opsional
   final bool khusus;
-  final bool isVideo;
+  // final bool isVideo;
 
   const FormSoalKognitifUmum({
     super.key,
     this.userTerpilihID,
     this.khusus = false,
-    this.isVideo = false,
+    // this.isVideo = false,
   });
 
   @override
@@ -38,6 +38,8 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
   final soalController = TextEditingController();
   final jawabanBenarController = TextEditingController();
 
+  final urlController = TextEditingController();
+
   File? _selectedImage;
 
   @override
@@ -45,7 +47,7 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
 
     String? userTerpilihID = widget.userTerpilihID;
     bool isKhusus = widget.khusus;
-    bool isVideo = widget.isVideo;
+    // bool isVideo = widget.isVideo;
 
     return Scaffold(
       backgroundColor: Color(0xFF00cfd6),
@@ -95,7 +97,7 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
                     const SizedBox(height: 5),
                 
                     // gambar
-                    // !isVideo ? 
+                    // !widget.isVideo ? 
                     MyFormRow(
                       labelText: "Gambar", 
                       myWidget: MyImagePicker(

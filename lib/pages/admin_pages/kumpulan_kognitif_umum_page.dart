@@ -10,6 +10,7 @@ import '../../components/soal_crud_button.dart';
 import '../../models/soal.dart';
 import '../../services/auth_service.dart';
 import '../../services/firestore.dart';
+import 'forms/soal_video_page.dart';
 
 class KumpulanSoalKognitifPage extends StatefulWidget {
   final String? userTerpilihID;// nama user opsional
@@ -140,62 +141,68 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
 
     double screenHeight = MediaQuery.sizeOf(context).height;
 
-    return Scaffold(
-      backgroundColor: Color(0xFF00cfd6),
-      resizeToAvoidBottomInset: false,
-
-      appBar: MyAppBar(title: "Kumpulan Soal",),
-      body: isLoading
-          ? Center(child: CircularProgressIndicator()) // Kondisi loading
-        : soal.isEmpty
-          ? Center(child: Text("Tidak ada soal", style: TextStyle(color: Colors.white),),) // Kondisi kosong
-        : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                
-                    // kotak soal
-                    Container(
-                      // color: Color(0xFF68F1F6),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: Colors.white,
-                      ),
-                      height: screenHeight * 2/4,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: PageView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          controller: _controller,
-                          itemCount: soal.length,
-                          onPageChanged: (index) {
-                            setState(() {
-                              currentPageIndex = index;
-                            });
-                            // matikan editing
-                            _exitEdit();
-                            print(soal[index].soal);
-                          },
-                          itemBuilder: (context, index) {
-                            return buildSoalPage(soal[index], index);
-                          },
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => FormSoalVideoUmum()));
+      },
+      child: Scaffold(
+        backgroundColor: Color(0xFF00cfd6),
+        resizeToAvoidBottomInset: false,
+      
+        appBar: MyAppBar(title: "Kumpulan Soal",),
+        body: isLoading
+            ? Center(child: CircularProgressIndicator()) // Kondisi loading
+          : soal.isEmpty
+            ? Center(child: Text("Tidak ada soal", style: TextStyle(color: Colors.white),),) // Kondisi kosong
+          : SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                  
+                      // kotak soal
+                      Container(
+                        // color: Color(0xFF68F1F6),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: Colors.white,
+                        ),
+                        height: screenHeight * 2/4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: PageView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: _controller,
+                            itemCount: soal.length,
+                            onPageChanged: (index) {
+                              setState(() {
+                                currentPageIndex = index;
+                              });
+                              // matikan editing
+                              _exitEdit();
+                              print(soal[index].soal);
+                            },
+                            itemBuilder: (context, index) {
+                              return buildSoalPage(soal[index], index);
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                
-                    // tombol ke soal sebelum dan selanjutnya
-                    MyPageNavigatorButton(
-                      canEdit: canEdit,
-                      currentPageIndex: currentPageIndex,
-                      pageLength: soal.length,
-                      pagesController: _controller,
-                    ),
-                  ],
+                  
+                      // tombol ke soal sebelum dan selanjutnya
+                      MyPageNavigatorButton(
+                        canEdit: canEdit,
+                        currentPageIndex: currentPageIndex,
+                        pageLength: soal.length,
+                        pagesController: _controller,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 
