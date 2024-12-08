@@ -10,6 +10,7 @@ import '../common_pages/login_page.dart';
 import '../common_pages/profil_page.dart';
 import 'tests/soal_kognitif_quiz.dart';
 import 'tests/soal_umum_quiz.dart';
+import 'tests/soal_video_quiz.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});
@@ -76,7 +77,8 @@ class _UserPageState extends State<UserPage> {
                               
                       // soal video umum
                       MyMenuCard(
-                        onTap: () => {}, 
+                        onTap: () =>
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SoalVideoQuiz())), 
                         text: 'Soal Video Umum', 
                         size: 140,
                         cardIcon: Icon(Icons.videocam, size: 60,),
@@ -93,7 +95,7 @@ class _UserPageState extends State<UserPage> {
                       ),
                       
                               
-                      // soal kognitif umum
+                      // soal kognitif khusus
                       MyMenuCard(
                         onTap: () =>
                         Navigator.push(context, MaterialPageRoute(builder: (context) => SoalKognitifQuiz(currentUser: profil, khusus: true,))),
@@ -103,9 +105,10 @@ class _UserPageState extends State<UserPage> {
                       ),
                   
                               
-                      // soal video umum
+                      // soal video khusus
                       MyMenuCard(
-                        onTap: () => {}, 
+                        onTap: () =>
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SoalVideoQuiz(currentUser: profil, khusus: true,))), 
                         text: 'Soal Video Khusus', 
                         size: 140,
                         cardIcon: Icon(Icons.videocam, size: 60,),

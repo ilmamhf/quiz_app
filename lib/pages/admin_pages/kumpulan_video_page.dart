@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../components/big_popup.dart';
 import '../../components/my_appbar.dart';
+import '../../components/my_button.dart';
 import '../../components/my_form_row.dart';
 import '../../components/my_textfield.dart';
+import '../../components/my_yt_player.dart';
 import '../../components/page_navigator_button.dart';
 import '../../components/soal_crud_button.dart';
 import '../../models/soal.dart';
@@ -12,21 +16,21 @@ import '../../services/auth_service.dart';
 import '../../services/firestore.dart';
 import 'forms/soal_video_page.dart';
 
-class KumpulanSoalKognitifPage extends StatefulWidget {
+class KumpulanSoalVideoPage extends StatefulWidget {
   final String? userTerpilihID;// nama user opsional
   final bool khusus;
 
-  const KumpulanSoalKognitifPage({
+  const KumpulanSoalVideoPage({
     super.key,
     this.userTerpilihID, 
     this.khusus = false,
   });
 
   @override
-  State<KumpulanSoalKognitifPage> createState() => _KumpulanSoalKognitifPageState();
+  State<KumpulanSoalVideoPage> createState() => _KumpulanSoalVideoPageState();
 }
 
-class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
+class _KumpulanSoalVideoPageState extends State<KumpulanSoalVideoPage> {
   
   final FirestoreService firestoreService = FirestoreService();
   final AuthService authService = AuthService();
@@ -38,6 +42,8 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
 
   List<TextEditingController> soalControllers = [];
   List<TextEditingController> jawabanBenarControllers = [];
+  List<TextEditingController> urlControllers = [];
+  List<YoutubePlayerController> videoControllers = [];
   
   bool canEdit = false;
 
@@ -55,12 +61,12 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
     List<SoalKognitif> fetchedSoal = [];
 
     if (widget.khusus == false) {
-      fetchedSoal = await firestoreService.fetchSoalKognitifUmum('umum');
+      fetchedSoal = await firestoreService.fetchSoalVideoUmum('umum');
     } else {
       String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
       String combinedUserID = currentEvaluatorID! + widget.userTerpilihID!;
 
-      fetchedSoal = await firestoreService.fetchSoalKognitifUmum(combinedUserID);
+      fetchedSoal = await firestoreService.fetchSoalVideoUmum(combinedUserID);
     }
 
     if (fetchedSoal.isEmpty) {
@@ -70,12 +76,20 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
       soal = fetchedSoal;
       soalControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
       jawabanBenarControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
+      urlControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
 
       // Inisialisasi controller dengan data soal
       for (int i = 0; i < fetchedSoal.length; i++) {
         soalControllers[i].text = fetchedSoal[i].soal;
         jawabanBenarControllers[i].text = fetchedSoal[i].jawabanBenar;
+        urlControllers[i].text = fetchedSoal[i].video;
+
+        // print(soalControllers[i].text);
+        // print(urlControllers[i].text);
       }
+      // String? videoId = YoutubePlayer.convertUrlToId(urlControllers[index].text);
+
+      videoControllers = List.generate(fetchedSoal.length, (index) => YoutubePlayerController(initialVideoId: YoutubePlayer.convertUrlToId(urlControllers[index].text).toString()));
     });
     }
     
@@ -86,13 +100,14 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
 
   void _deleteSoal(String soalId) async {
     if (widget.khusus == false) {
-      await firestoreService.deleteSoalKognitifUmum(soalId, 'umum');
+      await firestoreService.deleteSoalVideoUmum(soalId, 'umum');
     } else {
       String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
       String combinedUserID = currentEvaluatorID! + widget.userTerpilihID!;
 
-      await firestoreService.deleteSoalKognitifUmum(soalId, combinedUserID);
+      await firestoreService.deleteSoalVideoUmum(soalId, combinedUserID);
     }
+
     
     Fluttertoast.showToast(
       msg: "Soal berhasil dihapus",
@@ -108,6 +123,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
       id: soal.id, // Pastikan untuk menyertakan ID
       soal: soalControllers[index].text,
       jawabanBenar: jawabanBenarControllers[index].text,
+      video: urlControllers[index].text,
     );
 
     // Panggil fungsi untuk memperbarui soal di Firestore
@@ -143,11 +159,57 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
   }
   
   bool isLoading = true;
+
+  // @override
+  // void initState() {
+  //   videoController = YoutubePlayerController(
+  //     initialVideoId: '', // Video ID awal (bisa kosong)
+  //     flags: const YoutubePlayerFlags(
+  //       autoPlay: false,
+  //       mute: false,
+  //     ),
+  //   );
+
+  //   super.initState();
+  // }
+
+  void videoMemoryFix(int index) {
+    setState(() {
+      videoControllers[index].pause();
+    });
+    // super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+      for (var videoController in videoControllers) {
+        videoController.dispose();
+      }
+    super.dispose();
+  }
+
+  // @override
+  // void deactivate() {
+  //   // Pauses video while navigating to next page.
+  //   videoController.pause();
+
+  //   SystemChrome.setPreferredOrientations([
+  //     DeviceOrientation.portraitUp,
+  //     DeviceOrientation.portraitDown,
+  //   ]);
+  //   super.deactivate();
+  // }
+
+  bool adaVideo = false;
+  bool ytPlayerTerbuat = false;
   
   @override
   Widget build(BuildContext context) {
 
     double screenHeight = MediaQuery.sizeOf(context).height;
+
+
 
     return PopScope(
       canPop: false,
@@ -177,7 +239,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
                           borderRadius: BorderRadius.circular(20.0),
                           color: Colors.white,
                         ),
-                        height: screenHeight * 2/4,
+                        height: screenHeight * 3/4,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: PageView.builder(
@@ -187,6 +249,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
                             onPageChanged: (index) {
                               setState(() {
                                 currentPageIndex = index;
+                                videoMemoryFix(index);
                               });
                               // matikan editing
                               _exitEdit();
@@ -215,6 +278,9 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
   }
 
   Widget buildSoalPage(SoalKognitif soal, int index) {
+
+    // videoControllers[index].load(soal.video);
+
     return SingleChildScrollView(
       child: Container(
         // constraints: BoxConstraints(minHeight: 450),
@@ -239,7 +305,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
             // soal
             
             MyFormRow(
-              labelText: 'Soal : ',
+              labelText: 'Soal',
               myWidget: MyTextField(
                 controller: soalControllers[index],
                 hintText: 'Ketik soal di sini',
@@ -250,7 +316,47 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
       
             // gambar
       
+            // video
+            MyFormRow(
+              labelText: 'Video',
+              myWidget: Column(
+                children: [
+                  MyTextField(
+                    controller: urlControllers[index],
+                    hintText: 'Masukkan link YouTube',
+                    obscureText: false,
+                    enabled: canEdit,
+                  ),
+
+                  const SizedBox(height: 5),
+
+                  canEdit ? MyButton(
+                    text: 'Muat Video', 
+                    size: 5,
+                    fontSize: 12,
+                    paddingSize: 80,
+                    onTap: () {
+                      setState(() {
+                        String? videoId = YoutubePlayer.convertUrlToId(urlControllers[index].text);
+                        if (videoId != null) {// cari video
+                        videoControllers[index].load(videoId);
+                        }
+                      });
+                    }, 
+                  ) : SizedBox.shrink(),
+                ],
+              ),
+            ),
             const SizedBox(height: 5),
+
+            // komponen youtube video player
+            // vidLoaded ? 
+            MyYoutubePlayer(
+              controller: videoControllers[index]
+            ),
+            // : SizedBox.shrink(),
+            
+            SizedBox(height: 5),
             
             // jawaban benar
 
@@ -275,6 +381,13 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
                 //balikkan value
                 soalControllers[index].text = soal.soal;
                 jawabanBenarControllers[index].text = soal.jawabanBenar;
+                urlControllers[index].text = soal.video;
+                setState(() {
+                  String? videoId = YoutubePlayer.convertUrlToId(urlControllers[index].text);
+                  if (videoId != null) {// cari video
+                    videoControllers[index].load(videoId);
+                  }
+                });
                 _exitEdit();
               },
               simpanFunc: () {_saveSoal(soal, index);},

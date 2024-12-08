@@ -17,14 +17,16 @@ class SoalPG {
 
 class SoalKognitif {
   final String soal;
-  // final String gambar;
+  final String gambar;
   final String jawabanBenar;
   String id;
+  final String video;
   
   SoalKognitif({
     required this.soal,
-    // required this.gambar,
+    this.gambar = '',
     required this.jawabanBenar,
     this.id = 'firebase document id',
+    this.video = '',
   });
 }

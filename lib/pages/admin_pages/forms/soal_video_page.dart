@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +19,7 @@ import '../../../components/small_popup.dart';
 import '../../../models/soal.dart';
 import '../../../services/firestore.dart';
 import '../kumpulan_kognitif_umum_page.dart';
+import '../kumpulan_video_page.dart';
 
 class FormSoalVideoUmum extends StatefulWidget {
   final String? userTerpilihID;// nama user opsional
@@ -133,6 +135,7 @@ class _FormSoalVideoUmumState extends State<FormSoalVideoUmum> {
             autoPlay: false,
             mute: false,
           ),
+
         );
 
         print('adaaa');
@@ -226,8 +229,8 @@ class _FormSoalVideoUmumState extends State<FormSoalVideoUmum> {
                           padding: const EdgeInsets.symmetric(horizontal: 12.0),
                           child: Text(
                             isKhusus == false 
-                            ? 'Silahkan buat soal kognitif untuk semua user'
-                            : 'Silahkan buat soal kognitif untuk user $userTerpilihID'
+                            ? 'Silahkan buat soal video untuk semua user'
+                            : 'Silahkan buat soal video untuk user $userTerpilihID'
                           ),
                         ),
                     
@@ -235,7 +238,7 @@ class _FormSoalVideoUmumState extends State<FormSoalVideoUmum> {
                     
                         // soal
                         MyFormRow(
-                          labelText: 'Soal : ',
+                          labelText: 'Soal',
                           myWidget: MyTextField(
                             controller: soalController,
                             hintText: 'Ketik soal di sini',
@@ -246,31 +249,46 @@ class _FormSoalVideoUmumState extends State<FormSoalVideoUmum> {
                         const SizedBox(height: 5),
                     
                         // video
-                        // MyYoutubePlayer(
-                        //   controller: YTcontroller,
-                        //   urlController: urlController,
-                        // ),
-    
-                        TextField(
-                          controller: urlController,
-                          decoration: InputDecoration(
-                            labelText: 'Masukkan link YouTube',
+                        MyFormRow(
+                          labelText: 'Video',
+                          myWidget: Column(
+                            children: [
+                              MyTextField(
+                                controller: urlController,
+                                hintText: 'Masukkan link YouTube',
+                                obscureText: false,
+                              ),
+
+                              const SizedBox(height: 5),
+
+                              MyButton(
+                                text: 'Cari', 
+                                size: 5,
+                                fontSize: 12,
+                                paddingSize: 80,
+                                onTap: () {
+                                  setState(() {
+                                    String? videoId = YoutubePlayer.convertUrlToId(urlController.text);
+                                    if (videoId != null) {// cari video
+                                      if(ytPlayerTerbuat == false) {
+                                        _loadVideo();
+                                        ytPlayerTerbuat = true;
+                                      } else {
+                                        // _controller.pause();
+                                        _controller.load(videoId);
+                                        // _controller.pause();
+                                        // _controller.updateValue(_controller.value);
+                                        print(_controller.value.metaData.title);
+                                      }
+                                    }
+                                  });
+                                }, 
+                              ),
+                            ],
                           ),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              String? videoId = YoutubePlayer.convertUrlToId(urlController.text);
-                              if (videoId != null) {
-                                _loadVideo();
-
-                                // adaVideo = true;
-                              }
-                            });// cari video
-                          },
-                          child: Text('Cari'),
-                        ),
-                        SizedBox(height: 20),
+                        
+                        SizedBox(height: 5),
 
                         // komponen youtube video player
                         adaVideo ? MyYoutubePlayer(
@@ -282,7 +300,7 @@ class _FormSoalVideoUmumState extends State<FormSoalVideoUmum> {
                         // jawaban benar
     
                         MyFormRow(
-                          labelText: 'Jawaban Benar : ',
+                          labelText: 'Jawaban Benar',
                           myWidget: MyTextField(
                             controller: jawabanBenarController,
                             hintText: 'Ketik jawaban benar di sini',
@@ -302,32 +320,34 @@ class _FormSoalVideoUmumState extends State<FormSoalVideoUmum> {
                                 text: 'Simpan Soal',
                                 paddingSize: 15,
                                 onTap: () async { 
+                                  String? videoId = YoutubePlayer.convertUrlToId(urlController.text);
                                               
                                   // check apakah
                                   if (
                                     soalController.text.isNotEmpty &&
-                                    jawabanBenarController.text.isNotEmpty
+                                    jawabanBenarController.text.isNotEmpty &&
+                                    videoId != null
                                     ) {
                               
-                                    SoalKognitif soalKognitifUmum = SoalKognitif(
+                                    SoalKognitif SoalVideoUmum = SoalKognitif(
                                       soal: soalController.text,
-                                      // gambar: 'Belum ada gambar',
+                                      video: urlController.text,
                                       jawabanBenar: jawabanBenarController.text,
                                     );
                                               
                                     // add to db
                                     print('uploading... ');
                                     if (isKhusus == false) {
-                                      firestoreService.addSoalKognitifUmum(soalKognitifUmum, 'umum');
+                                      firestoreService.addSoalVideoUmum(SoalVideoUmum, 'umum');
                                     } else {
                                       String? currentEvaluatorID = await FirebaseAuth.instance.currentUser!.uid;
                                       String combinedUserID = currentEvaluatorID + userTerpilihID!;
     
-                                      firestoreService.addSoalKognitifUmum(soalKognitifUmum, combinedUserID);
+                                      firestoreService.addSoalVideoUmum(SoalVideoUmum, combinedUserID);
                                     }
                                     print('soal terupload');
                                     
-                                    MyBigPopUp.showAlertDialog(context: context, teks: 'Soal kognitif umum sudah terupload!');
+                                    MyBigPopUp.showAlertDialog(context: context, teks: 'Soal video sudah terupload!');
                                               
                                     // Navigator.push(context, MaterialPageRoute(
                                     //   builder: (context) => SelesaiBuatSoalUmumPage()
@@ -348,8 +368,8 @@ class _FormSoalVideoUmumState extends State<FormSoalVideoUmum> {
                                 text: 'Kumpulan Soal',
                                 onTap: isKhusus == false ? 
                                   () => 
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => KumpulanSoalKognitifPage()))
-                                  :() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => KumpulanSoalKognitifPage(khusus: true, userTerpilihID: userTerpilihID,))), 
+                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => KumpulanSoalVideoPage()))
+                                  :() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => KumpulanSoalVideoPage(khusus: true, userTerpilihID: userTerpilihID,))), 
                                 paddingSize: 15,
                               ),
                             ),

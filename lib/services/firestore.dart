@@ -85,6 +85,8 @@ class FirestoreService {
       DocumentReference docRef = await _firestore.collection('soal kognitif $tipe').add({
         'Soal': soalKognitifUmum.soal,
         'Jawaban Benar': soalKognitifUmum.jawabanBenar,
+        'Video': soalKognitifUmum.video,
+        'Gambar': soalKognitifUmum.gambar
       });
 
       await addID(docRef);
@@ -104,6 +106,7 @@ class FirestoreService {
           soal: data['Soal'],
           jawabanBenar: data['Jawaban Benar'],
           id : doc.id,
+          video: data['Video'] ?? '',
         );
       }).toList();
     } catch (e) {
@@ -113,9 +116,9 @@ class FirestoreService {
   }
 
   // Fungsi untuk menghapus soal di Firestore
-  Future<void> deleteSoalKognitifUmum(soalId) async {
+  Future<void> deleteSoalKognitifUmum(soalId, String tipe) async {
     try {
-      await _firestore.collection('soal kognitif umum').doc(soalId).delete();
+      await _firestore.collection('soal kognitif $tipe').doc(soalId).delete();
       print('Dokumen dengan ID $soalId berhasil dihapus.');
     } catch (e) {
       print('Gagal menghapus dokumen: $e');
@@ -134,6 +137,67 @@ class FirestoreService {
       print('Gagal memperbarui soal kognitif: $e');
     }
   }
+
+  // ------------------------------------------ soal video
+  // Fungsi untuk menambah soal ke Firestore
+  Future<void> addSoalVideoUmum(SoalKognitif soalKognitifUmum, String tipe) async {
+    try {
+      DocumentReference docRef = await _firestore.collection('soal video $tipe').add({
+        'Soal': soalKognitifUmum.soal,
+        'Jawaban Benar': soalKognitifUmum.jawabanBenar,
+        'Video': soalKognitifUmum.video,
+        'Gambar': soalKognitifUmum.gambar
+      });
+
+      await addID(docRef);
+      print('Dokumen berhasil dibuat dengan ID: ${docRef.id}');
+    } catch (e) {
+      print('Gagal menambah soal video: $e');
+    }
+  }
+
+  // Fungsi untuk mengambil soal dari Firestore dan mengembalikannya sebagai list of Soal
+  Future<List<SoalKognitif>> fetchSoalVideoUmum(String tipe) async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('soal video $tipe').get();
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return SoalKognitif(
+          soal: data['Soal'],
+          jawabanBenar: data['Jawaban Benar'],
+          id : doc.id,
+          video: data['Video'] ?? '',
+        );
+      }).toList();
+    } catch (e) {
+      print('Gagal mengambil soal video: $e');
+      return []; // Mengembalikan list kosong jika terjadi kesalahan
+    }
+  }
+
+  // Fungsi untuk menghapus soal di Firestore
+  Future<void> deleteSoalVideoUmum(soalId, String tipe) async {
+    try {
+      await _firestore.collection('soal video $tipe').doc(soalId).delete();
+      print('Dokumen dengan ID $soalId berhasil dihapus.');
+    } catch (e) {
+      print('Gagal menghapus dokumen: $e');
+    }
+  }
+
+  // Fungsi untuk memperbarui soal di Firestore
+  Future<void> updateSoalVideoUmum(SoalKognitif soalUmum, String tipe) async {
+    try {
+      await _firestore.collection('soal video $tipe').doc(soalUmum.id).update({
+        'Soal': soalUmum.soal,
+        'Jawaban Benar': soalUmum.jawabanBenar,
+      });
+      print('Dokumen berhasil diperbarui dengan ID: ${soalUmum.id}');
+    } catch (e) {
+      print('Gagal memperbarui soal video: $e');
+    }
+  }
+
 
   // Fungsi untuk menambah user admin/evaluator
   Future<void> addUser(Profil userProfile) async {
