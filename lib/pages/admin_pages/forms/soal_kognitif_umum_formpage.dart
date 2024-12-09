@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../components/big_popup.dart';
+import '../../../components/loading_popup.dart';
 import '../../../components/my_appbar.dart';
 import '../../../components/my_button.dart';
 import '../../../components/my_form_row.dart';
@@ -12,6 +13,7 @@ import '../../../components/my_textfield.dart';
 import '../../../components/my_yt_player.dart';
 import '../../../components/small_popup.dart';
 import '../../../models/soal.dart';
+import '../../../services/cloudinary.dart';
 import '../../../services/firestore.dart';
 import '../kumpulan_kognitif_umum_page.dart';
 
@@ -86,7 +88,7 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
                 
                     // soal
                     MyFormRow(
-                      labelText: 'Soal : ',
+                      labelText: 'Soal',
                       myWidget: MyTextField(
                         controller: soalController,
                         hintText: 'Ketik soal di sini',
@@ -97,7 +99,6 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
                     const SizedBox(height: 5),
                 
                     // gambar
-                    // !widget.isVideo ? 
                     MyFormRow(
                       labelText: "Gambar", 
                       myWidget: MyImagePicker(
@@ -108,14 +109,13 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
                         },
                       ),
                     ),
-                    // : MyYoutubePlayer(),
                 
                     const SizedBox(height: 5),
                 
                     // jawaban benar
 
                     MyFormRow(
-                      labelText: 'Jawaban Benar : ',
+                      labelText: 'Jawaban Benar',
                       myWidget: MyTextField(
                         controller: jawabanBenarController,
                         hintText: 'Ketik jawaban benar di sini',
@@ -140,32 +140,49 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
                               if (
                                 soalController.text.isNotEmpty &&
                                 jawabanBenarController.text.isNotEmpty
-                                ) {
-                          
-                                SoalKognitif soalKognitifUmum = SoalKognitif(
-                                  soal: soalController.text,
-                                  // gambar: 'Belum ada gambar',
-                                  jawabanBenar: jawabanBenarController.text,
-                                );
-                                          
-                                // add to db
-                                print('uploading... ');
-                                if (isKhusus == false) {
-                                  firestoreService.addSoalKognitifUmum(soalKognitifUmum, 'umum');
-                                } else {
-                                  String? currentEvaluatorID = await FirebaseAuth.instance.currentUser!.uid;
-                                  String combinedUserID = currentEvaluatorID + userTerpilihID!;
+                              ) {
 
-                                  firestoreService.addSoalKognitifUmum(soalKognitifUmum, combinedUserID);
+                                // Tampilkan dialog loading
+                                LoadingDialog.show(context);
+
+                                try {
+                                  String? linkGambar;
+                                  
+                                  if (_selectedImage != null) {
+                                    // upload gambar ke cloudinary
+                                    linkGambar = await uploadToCloudinary(_selectedImage);
+                                    if (linkGambar == null) {
+                                      throw Exception('Gagal upload'); // otomatis langsung keluar dari try
+                                    }
+                                  }
+                                  SoalKognitif soalKognitifUmum = SoalKognitif(
+                                    soal: soalController.text,
+                                    gambar: linkGambar ?? '',
+                                    jawabanBenar: jawabanBenarController.text,
+                                  );
+                                            
+                                  // add to db
+                                  print('uploading... ');
+                                  if (isKhusus == false) {
+                                    firestoreService.addSoalKognitifUmum(soalKognitifUmum, 'umum');
+                                  } else {
+                                    String? currentEvaluatorID = await FirebaseAuth.instance.currentUser!.uid;
+                                    String combinedUserID = currentEvaluatorID + userTerpilihID!;
+
+                                    firestoreService.addSoalKognitifUmum(soalKognitifUmum, combinedUserID);
+                                  }
+                                  print('soal terupload');
+
+                                  // exit dialog loading
+                                  LoadingDialog.hide(context);
+
+                                  MyBigPopUp.showAlertDialog(context: context, teks: 'Soal kognitif umum sudah terupload!');
+                                } catch (e) {
+                                  // exit dialog loading
+                                  LoadingDialog.hide(context);
+                                  
+                                  MyBigPopUp.showAlertDialog(context: context, teks: 'Gagal upload!');
                                 }
-                                print('soal terupload');
-                                
-                                MyBigPopUp.showAlertDialog(context: context, teks: 'Soal kognitif umum sudah terupload!');
-                                          
-                                // Navigator.push(context, MaterialPageRoute(
-                                //   builder: (context) => SelesaiBuatSoalUmumPage()
-                                // )
-                                // );
                               } else {
                                 MySmallPopUp.showToast(
                                   message: 'Soal tidak valid!',

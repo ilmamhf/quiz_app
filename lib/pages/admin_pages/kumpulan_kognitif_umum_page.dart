@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../../components/big_popup.dart';
 import '../../components/my_appbar.dart';
 import '../../components/my_form_row.dart';
+import '../../components/my_image_picker.dart';
 import '../../components/my_textfield.dart';
 import '../../components/page_navigator_button.dart';
 import '../../components/soal_crud_button.dart';
@@ -38,6 +39,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
 
   List<TextEditingController> soalControllers = [];
   List<TextEditingController> jawabanBenarControllers = [];
+  List<TextEditingController> gambarControllers = [];
   
   bool canEdit = false;
 
@@ -70,11 +72,13 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
       soal = fetchedSoal;
       soalControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
       jawabanBenarControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
+      gambarControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
 
       // Inisialisasi controller dengan data soal
       for (int i = 0; i < fetchedSoal.length; i++) {
         soalControllers[i].text = fetchedSoal[i].soal;
         jawabanBenarControllers[i].text = fetchedSoal[i].jawabanBenar;
+        gambarControllers[i].text = fetchedSoal[i].gambar;
       }
     });
     }
@@ -249,7 +253,21 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
             ),
       
             // gambar
-      
+            // cek dulu ada gambarnya ga?
+            // kalo gaada widget myimagepicker langsung
+            // kalo ada widget network image, (kalo masuk edit mode muncul tombol hapus, langsung muncul widget myimagepicker)
+            // kalo edit trus batal ganti lagi ke widget network image
+            // MyFormRow(
+            //   labelText: "Gambar", 
+            //   myWidget: MyImagePicker(
+            //     onImageSelected: (File? image) {
+            //       setState(() {
+            //         _selectedImage = image;
+            //       });
+            //     },
+            //   ),
+            // ),
+            
             const SizedBox(height: 5),
             
             // jawaban benar
