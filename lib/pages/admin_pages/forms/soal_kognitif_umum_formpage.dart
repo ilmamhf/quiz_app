@@ -107,6 +107,13 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
                             _selectedImage = image;
                           });
                         },
+                        deleteFunc: (File? image) {
+                          setState(() {
+                            _selectedImage = null;
+                            PaintingBinding.instance.imageCache.clear();
+                            print('gambar terhapus');
+                          });
+                        },
                       ),
                     ),
                 

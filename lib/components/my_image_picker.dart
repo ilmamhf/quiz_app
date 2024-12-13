@@ -6,10 +6,12 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class MyImagePicker extends StatefulWidget {
   final Function(File?) onImageSelected;
+  final Function(File?) deleteFunc;
 
   const MyImagePicker({
     super.key,
     required this.onImageSelected,
+    required this.deleteFunc,
   });
 
   @override
@@ -98,10 +100,9 @@ Future<void> _pickImageFromGallery() async {
                     paddingSize: 10,
                     onTap: () {
                       setState(() {
-                        _selectedImage = null;
-                        PaintingBinding.instance.imageCache.clear();
-                        print('gambar terhapus');
+                        _selectedImage = null; // Reset image di dalam widget
                       });
+                      widget.deleteFunc(_selectedImage); // Panggil fungsi penghapusan di luar widget
                     },
                   )
                 : SizedBox.shrink(),

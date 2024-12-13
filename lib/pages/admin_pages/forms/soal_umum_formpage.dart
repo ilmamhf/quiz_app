@@ -121,6 +121,13 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                             _selectedImage = image;
                           });
                         },
+                        deleteFunc: (File? image) {
+                          setState(() {
+                            _selectedImage = null;
+                            PaintingBinding.instance.imageCache.clear();
+                            print('gambar terhapus');
+                          });
+                        },
                       ),
                     ),
                 
