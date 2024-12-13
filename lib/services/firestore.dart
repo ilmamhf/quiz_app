@@ -107,6 +107,7 @@ class FirestoreService {
           jawabanBenar: data['Jawaban Benar'],
           id : doc.id,
           video: data['Video'] ?? '',
+          gambar: data['Gambar'] ?? ''
         );
       }).toList();
     } catch (e) {
@@ -131,6 +132,7 @@ class FirestoreService {
       await _firestore.collection('soal kognitif $tipe').doc(soalUmum.id).update({
         'Soal': soalUmum.soal,
         'Jawaban Benar': soalUmum.jawabanBenar,
+        'Gambar' : soalUmum.gambar
       });
       print('Dokumen berhasil diperbarui dengan ID: ${soalUmum.id}');
     } catch (e) {

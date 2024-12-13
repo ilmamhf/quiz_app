@@ -59,6 +59,7 @@ Future<void> _pickImageFromGallery() async {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _selectedImage != null
             ? Padding(

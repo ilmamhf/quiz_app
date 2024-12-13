@@ -1,15 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../components/big_popup.dart';
+import '../../components/loading_popup.dart';
 import '../../components/my_appbar.dart';
+import '../../components/my_button.dart';
 import '../../components/my_form_row.dart';
 import '../../components/my_image_picker.dart';
 import '../../components/my_textfield.dart';
+import '../../components/network_image.dart';
 import '../../components/page_navigator_button.dart';
 import '../../components/soal_crud_button.dart';
 import '../../models/soal.dart';
 import '../../services/auth_service.dart';
+import '../../services/cloudinary.dart';
 import '../../services/firestore.dart';
 import 'forms/soal_video_page.dart';
 
@@ -36,10 +42,12 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
 
   PageController _controller = PageController();
   int currentPageIndex = 0;
+  File? newImage;
 
   List<TextEditingController> soalControllers = [];
   List<TextEditingController> jawabanBenarControllers = [];
-  List<TextEditingController> gambarControllers = [];
+  List<String> gambarControllers = [];
+  List<bool> gambarDariInternet = [];
   
   bool canEdit = false;
 
@@ -66,19 +74,24 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
     }
 
     if (fetchedSoal.isEmpty) {
-      print('kosnng');
+      print('kosong');
     } else {
       setState(() {
       soal = fetchedSoal;
       soalControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
       jawabanBenarControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
-      gambarControllers = List.generate(fetchedSoal.length, (index) => TextEditingController());
+      gambarDariInternet = List.generate(fetchedSoal.length, (index) => bool() = false);
+      gambarControllers = List.generate(fetchedSoal.length, (index) => String() = '');
 
       // Inisialisasi controller dengan data soal
       for (int i = 0; i < fetchedSoal.length; i++) {
         soalControllers[i].text = fetchedSoal[i].soal;
         jawabanBenarControllers[i].text = fetchedSoal[i].jawabanBenar;
-        gambarControllers[i].text = fetchedSoal[i].gambar;
+        // gambarControllers[i].text = fetchedSoal[i].gambar;
+        if (fetchedSoal[i].gambar.isNotEmpty) {
+          gambarDariInternet[i] = true;
+          gambarControllers[i] = fetchedSoal[i].gambar;
+        }
       }
     });
     }
@@ -107,27 +120,63 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
   }
 
   void _saveSoal(SoalKognitif soal, int index) async {
-    // Buat objek soal baru dengan data yang telah diubah
-    SoalKognitif updatedSoal = SoalKognitif(
-      id: soal.id, // Pastikan untuk menyertakan ID
-      soal: soalControllers[index].text,
-      jawabanBenar: jawabanBenarControllers[index].text,
-    );
+    // Tampilkan dialog loading
+    LoadingDialog.show(context);
 
-    // Panggil fungsi untuk memperbarui soal di Firestore
-    if (widget.khusus == false) {
-      await firestoreService.updateSoalKognitifUmum(updatedSoal, 'umum');
-    } else {
-      String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
-      String combinedUserID = currentEvaluatorID! + widget.userTerpilihID!;
-      await firestoreService.updateSoalKognitifUmum(updatedSoal, combinedUserID);
+    String? linkGambar;
+
+    try {
+
+      if (gambarDariInternet[index] == false) {
+        gambarControllers[index] = ''; // kondisi kalo gapake gambar
+        if (newImage != null) {
+          // upload gambar ke cloudinary
+          linkGambar = await uploadToCloudinary(newImage);
+          if (linkGambar == null) {
+            throw Exception('Gagal upload'); // otomatis langsung keluar dari try
+          } else {
+            gambarDariInternet[index] = true;
+            gambarControllers[index] = linkGambar;
+          }
+        }
+      } else {
+        linkGambar = gambarControllers[index];
+      }
+
+      print(linkGambar);
+      
+      // Buat objek soal baru dengan data yang telah diubah
+      SoalKognitif updatedSoal = SoalKognitif(
+        id: soal.id, // Pastikan untuk menyertakan ID
+        soal: soalControllers[index].text,
+        jawabanBenar: jawabanBenarControllers[index].text,
+        gambar: linkGambar ?? '',
+      );
+      print(updatedSoal.gambar);
+
+      // Panggil fungsi untuk memperbarui soal di Firestore
+      if (widget.khusus == false) {
+        await firestoreService.updateSoalKognitifUmum(updatedSoal, 'umum');
+      } else {
+        String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
+        String combinedUserID = currentEvaluatorID! + widget.userTerpilihID!;
+        await firestoreService.updateSoalKognitifUmum(updatedSoal, combinedUserID);
+      }
+
+      // Perbarui data lokal
+      setState(() {
+        _saveLocal(updatedSoal, index);
+        canEdit = false;
+      });
+
+      // exit dialog loading
+      LoadingDialog.hide(context);
+      MyBigPopUp.showAlertDialog(context: context, teks: 'Soal berhasil diperbarui!');
+    } catch (e) {
+      // exit dialog loading
+      LoadingDialog.hide(context);
+      MyBigPopUp.showAlertDialog(context: context, teks: 'Gagal upload!');
     }
-
-    // Perbarui data lokal
-    setState(() {
-      _saveLocal(updatedSoal, index);
-      canEdit = false;
-    });
   }
 
   void _editSoal(SoalKognitif soal) {
@@ -153,72 +202,70 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
 
     double screenHeight = MediaQuery.sizeOf(context).height;
 
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => FormSoalVideoUmum()));
-      },
-      child: Scaffold(
-        backgroundColor: Color(0xFF00cfd6),
-        resizeToAvoidBottomInset: false,
-      
-        appBar: MyAppBar(title: "Kumpulan Soal",),
-        body: isLoading
-            ? Center(child: CircularProgressIndicator()) // Kondisi loading
-          : soal.isEmpty
-            ? Center(child: Text("Tidak ada soal", style: TextStyle(color: Colors.white),),) // Kondisi kosong
-          : SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                  
-                      // kotak soal
-                      Container(
-                        // color: Color(0xFF68F1F6),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20.0),
-                          color: Colors.white,
-                        ),
-                        height: screenHeight * 2/4,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: PageView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            controller: _controller,
-                            itemCount: soal.length,
-                            onPageChanged: (index) {
-                              setState(() {
-                                currentPageIndex = index;
-                              });
-                              // matikan editing
-                              _exitEdit();
-                              print(soal[index].soal);
-                            },
-                            itemBuilder: (context, index) {
-                              return buildSoalPage(soal[index], index);
-                            },
-                          ),
+    return Scaffold(
+      backgroundColor: Color(0xFF00cfd6),
+      resizeToAvoidBottomInset: false,
+    
+      appBar: MyAppBar(title: "Kumpulan Soal",),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator()) // Kondisi loading
+        : soal.isEmpty
+          ? Center(child: Text("Tidak ada soal", style: TextStyle(color: Colors.white),),) // Kondisi kosong
+        : SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                
+                    // kotak soal
+                    Container(
+                      // color: Color(0xFF68F1F6),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20.0),
+                        color: Colors.white,
+                      ),
+                      height: screenHeight * 6/9,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: PageView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          controller: _controller,
+                          itemCount: soal.length,
+                          onPageChanged: (index) {
+                            setState(() {
+                              currentPageIndex = index;
+                            });
+                            // matikan editing
+                            _exitEdit();
+                            print(soal[index].soal);
+                          },
+                          itemBuilder: (context, index) {
+                            return buildSoalPage(soal[index], index);
+                          },
                         ),
                       ),
-                  
-                      // tombol ke soal sebelum dan selanjutnya
-                      MyPageNavigatorButton(
-                        canEdit: canEdit,
-                        currentPageIndex: currentPageIndex,
-                        pageLength: soal.length,
-                        pagesController: _controller,
-                      ),
-                    ],
-                  ),
+                    ),
+                
+                    // tombol ke soal sebelum dan selanjutnya
+                    MyPageNavigatorButton(
+                      canEdit: canEdit,
+                      currentPageIndex: currentPageIndex,
+                      pageLength: soal.length,
+                      pagesController: _controller,
+                    ),
+                  ],
                 ),
               ),
-      ),
+            ),
     );
   }
 
-  Widget buildSoalPage(SoalKognitif soal, int index) {
+  Widget buildSoalPage(SoalKognitif soal, int index) { // page untuk pageview builder
+
+    // bool gambarDariInternet = soal.gambar.isNotEmpty;
+    String imageUrl = soal.gambar;
+
     return SingleChildScrollView(
       child: Container(
         // constraints: BoxConstraints(minHeight: 450),
@@ -243,7 +290,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
             // soal
             
             MyFormRow(
-              labelText: 'Soal : ',
+              labelText: 'Soal',
               myWidget: MyTextField(
                 controller: soalControllers[index],
                 hintText: 'Ketik soal di sini',
@@ -251,29 +298,51 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
                 enabled: canEdit,
               ),
             ),
+            const SizedBox(height: 5),
       
             // gambar
-            // cek dulu ada gambarnya ga?
-            // kalo gaada widget myimagepicker langsung
-            // kalo ada widget network image, (kalo masuk edit mode muncul tombol hapus, langsung muncul widget myimagepicker)
-            // kalo edit trus batal ganti lagi ke widget network image
-            // MyFormRow(
-            //   labelText: "Gambar", 
-            //   myWidget: MyImagePicker(
-            //     onImageSelected: (File? image) {
-            //       setState(() {
-            //         _selectedImage = image;
-            //       });
-            //     },
-            //   ),
-            // ),
+            MyFormRow(
+              labelText: "Gambar", 
+              myWidget: 
+                gambarDariInternet[index] ? Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: MyNetworkImage(
+                        imageUrl: imageUrl,
+                      ),
+                    ),
+                    canEdit ?
+                      MyButton(
+                        text: 'Hapus',
+                        size: 5,
+                        fontSize: 12,
+                        onTap: () {
+                          setState(() {
+                            imageUrl = '';
+                            gambarDariInternet[index] = false;
+                          });
+                          print('gambar terhapus');
+                        },
+                      )
+                    : SizedBox.shrink()
+                  ],
+                )
+              : canEdit ? MyImagePicker(
+                onImageSelected: (File? image) {
+                  setState(() {
+                    newImage = image;
+                  });
+                },
+              ) : SizedBox.shrink()
+            ),
             
             const SizedBox(height: 5),
             
             // jawaban benar
 
             MyFormRow(
-              labelText: 'Jawaban Benar : ',
+              labelText: 'Jawaban Benar',
               myWidget: MyTextField(
                 controller: jawabanBenarControllers[index],
                 hintText: 'Ketik jawaban benar di sini',
@@ -287,15 +356,25 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
             // edit, hapus, batal, simpan
             MySoalCRUDButton(
               canEdit: canEdit,
-              deleteFunc: () {_deleteSoal(soal.id);},
-              editFunc: () {_editSoal(soal);},
+              deleteFunc: () {_deleteSoal(soal.id); newImage = null;},
+              editFunc: () {_editSoal(soal); print(soal.gambar); print(gambarControllers[index]); print(gambarDariInternet[index].toString()); newImage = null;},
               batalFunc: () {
                 //balikkan value
                 soalControllers[index].text = soal.soal;
                 jawabanBenarControllers[index].text = soal.jawabanBenar;
+                if (soal.gambar.isNotEmpty) {
+                  setState(() {
+                    gambarDariInternet[index] = true;
+                  });
+                }
+                newImage = null;
                 _exitEdit();
               },
-              simpanFunc: () {_saveSoal(soal, index);},
+              simpanFunc: () {
+                _saveSoal(soal, index);
+                // print(gambarDariInternet[index].toString());
+                newImage = null;
+              },
             ),
           ],
         ),
