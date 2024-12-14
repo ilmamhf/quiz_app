@@ -5,7 +5,7 @@ class MySmallPopUp {
   static void showToast({
     required String message,
     ToastGravity gravity = ToastGravity.BOTTOM,
-    Color backgroundColor = Colors.black,
+    Color backgroundColor = Colors.red,
     Color textColor = Colors.white,
     int duration = 3, // dalam detik
   }) {

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import '../../components/date_picker.dart';
 import '../../components/my_button.dart';
 import '../../components/my_checkbox_row.dart';
@@ -63,11 +64,11 @@ class _RegisterPageState extends State<RegisterPage> {
           password: passwordController.text,
           );
 
-          // Ambil tanggal dari dateController
-          final tglLahir = DateTime.parse(tglLahirController.text);
-          // Buat objek Timestamp dari combinedDateTime
-          final timestamp = Timestamp.fromDate(tglLahir);
-          tipeAkunTerpilih = tipeAkun[selectedAnswerNotifier.value];
+          // Parsing teks dari dateController ke DateTime
+          DateTime parsedDate = DateFormat('dd/MM/yyyy').parse(tglLahirController.text);
+
+          // Konversi DateTime ke Timestamp
+          Timestamp timestamp = Timestamp.fromDate(parsedDate);
 
           Profil userProfile = Profil(
             nama: namaLengkapController.text,
@@ -252,7 +253,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       builder: (context, value, child) {
                         // Pastikan value tidak -1
                         if (value != -1 && tipeAkun[value] == 'User') {
-                          return Row(
+                          return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text("User harus dibuatkan oleh evaluator"),

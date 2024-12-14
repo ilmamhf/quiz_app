@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DatePicker extends StatefulWidget {
   final String text;
   final dateController;
   final Color labelColor;
+  final bool enabled;
   
   const DatePicker({
     super.key, 
     required this.text, 
     required this.dateController,
     required this.labelColor,
+    this.enabled = true,
   });
 
   @override
@@ -27,6 +30,7 @@ class _DatePickerState extends State<DatePicker> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           TextFormField(
+            enabled: widget.enabled,
             controller: widget.dateController,
             decoration: InputDecoration(
               hintText: widget.text,
@@ -76,8 +80,9 @@ class _DatePickerState extends State<DatePicker> {
     );
 
     if (_picked != null){
+      String formattedDate = DateFormat('dd/MM/yyyy').format(_picked);
       setState(() {
-        this.widget.dateController.text = _picked.toString().split(" ")[0];
+        widget.dateController.text = formattedDate;
       });
     } 
     // else {

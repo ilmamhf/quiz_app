@@ -155,6 +155,7 @@ class _SoalVideoQuizState extends State<SoalVideoQuiz> {
                     
                   Expanded(
                     child: PageView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
                       controller: _controller,
                       itemCount: soal.length,
                       onPageChanged: (index) {
@@ -272,7 +273,7 @@ class _SoalVideoQuizState extends State<SoalVideoQuiz> {
                   child: Text(
                     soal.soal,
                     style: TextStyle(fontSize: 16.0),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.justify,
                   ),
                 ),
               ),

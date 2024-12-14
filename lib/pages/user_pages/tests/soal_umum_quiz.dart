@@ -141,7 +141,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
                     
                   Expanded(
                     child: PageView.builder(
-                      
+                      physics: const NeverScrollableScrollPhysics(),
                       controller: _controller,
                       itemCount: soal.length,
                       onPageChanged: (index) {
@@ -245,7 +245,7 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
                   child: Text(
                     soal.soal,
                     style: TextStyle(fontSize: 16.0),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.justify,
                   ),
                 ),
               ),

@@ -38,6 +38,9 @@ class MyApp extends StatelessWidget {
       // theme: ThemeData(
       //   fontFamily: ''
       // ),
+      theme: ThemeData(
+        disabledColor: Colors.grey[600]
+      ),
       debugShowCheckedModeBanner: false,
       home: LoginPage(),
       routes: {

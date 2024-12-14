@@ -45,6 +45,15 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
   File? _selectedImage;
 
   @override
+  void dispose() {
+    soalController.dispose();
+    jawabanBenarController.dispose();
+    urlController.dispose();
+    PaintingBinding.instance.imageCache.clear();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     String? userTerpilihID = widget.userTerpilihID;
@@ -183,7 +192,7 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
                                   // exit dialog loading
                                   LoadingDialog.hide(context);
 
-                                  MyBigPopUp.showAlertDialog(context: context, teks: 'Soal kognitif umum sudah terupload!');
+                                  MyBigPopUp.showAlertDialog(context: context, teks: 'Soal sudah terupload!');
                                 } catch (e) {
                                   // exit dialog loading
                                   LoadingDialog.hide(context);

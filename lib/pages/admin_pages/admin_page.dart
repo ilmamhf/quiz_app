@@ -35,10 +35,6 @@ class _AdminPageState extends State<AdminPage> {
     setState(() {
       isLoading = true;
     });
-    // String name = await firestoreService.getFullName();
-    // // setState(() {
-    // //   fullName = name;
-    // // });
 
     Profil? profil = await authService.getProfilByUsername(FirebaseAuth.instance.currentUser!.email!);
     setState(() {
@@ -78,7 +74,6 @@ class _AdminPageState extends State<AdminPage> {
                   // buat soal kognitif umum
                   MyMenuCard(
                     onTap: () {
-                      print('oi');
                       Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalKognitifUmum()));
                     },
                     text: 'Buat Soal Kognitif Umum',

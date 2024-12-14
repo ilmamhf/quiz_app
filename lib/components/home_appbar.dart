@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/profil.dart';
@@ -37,7 +38,16 @@ class HomeAppbar extends StatelessWidget implements PreferredSizeWidget {
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
-          onTap: () {Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilPage(profil: profil,)));},
+          onTap: () {
+            String userID;
+            if (profil.role != 'User') {
+              userID = FirebaseAuth.instance.currentUser!.uid;
+            } else {
+              userID = profil.evaluatorID! + profil.username!;
+            }
+            
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilPage(userID: userID,)));
+          },
           child: CircleAvatar(
             backgroundColor: Colors.white, 
             child: Icon(Icons.person, size: 60, color: Colors.black,)

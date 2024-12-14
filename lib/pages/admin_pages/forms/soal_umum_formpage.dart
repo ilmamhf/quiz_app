@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../components/big_popup.dart';
+import '../../../components/loading_popup.dart';
 import '../../../components/my_appbar.dart';
 import '../../../components/my_button.dart';
 import '../../../components/my_checkbox_row.dart';
@@ -17,6 +18,7 @@ import '../../../components/my_textfield.dart';
 import '../../../components/small_popup.dart';
 import '../../../models/soal.dart';
 import '../../../services/auth_service.dart';
+import '../../../services/cloudinary.dart';
 import '../../../services/firestore.dart';
 import '../kumpulan_pg_umum_page.dart';
 
@@ -180,38 +182,60 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
                                 jawabanControllers[3].text.isNotEmpty &&
                                 selectedAnswerNotifier.value != -1
                                 ) {
-                                for (int i = 0; i < 4; i++) {
-                                  listJawaban[i] = jawabanControllers[i].text;
-                                }
-                                SoalPG soalUmum = SoalPG(
-                                  soal: soalController.text,
-                                  // gambar: 'Belum ada gambar',
-                                  listJawaban: listJawaban,
-                                  jawabanBenar: listJawaban[selectedAnswerNotifier.value],
-                                );
-                                              
-                                // add to db
-                                print('uploading... ');
-                                if (isKhusus == false) {
-                                  firestoreService.addSoalPGUmum(soalUmum, 'umum');
-                                } else {
-                                  String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
-                                  String combinedUserID = currentEvaluatorID! + userTerpilihID!;
 
-                                  firestoreService.addSoalPGUmum(soalUmum, combinedUserID);
+                                // Tampilkan dialog loading
+                                LoadingDialog.show(context);
+
+                                try {
+                                  String? linkGambar;
+
+                                  if (_selectedImage != null) {
+                                    // upload gambar ke cloudinary
+                                    linkGambar = await uploadToCloudinary(_selectedImage);
+                                    if (linkGambar == null) {
+                                      throw Exception('Gagal upload'); // otomatis langsung keluar dari try
+                                    }
+                                  }
+
+                                  for (int i = 0; i < 4; i++) {
+                                    listJawaban[i] = jawabanControllers[i].text;
+                                  }
+                                  SoalPG soalUmum = SoalPG(
+                                    soal: soalController.text,
+                                    gambar: linkGambar ?? '',
+                                    listJawaban: listJawaban,
+                                    jawabanBenar: listJawaban[selectedAnswerNotifier.value],
+                                  );
+                                                
+                                  // add to db
+                                  print('uploading... ');
+                                  if (isKhusus == false) {
+                                    firestoreService.addSoalPGUmum(soalUmum, 'umum');
+                                  } else {
+                                    String? currentEvaluatorID = await authService.getCurrentFirebaseUserID();
+                                    String combinedUserID = currentEvaluatorID! + userTerpilihID!;
+
+                                    firestoreService.addSoalPGUmum(soalUmum, combinedUserID);
+                                  }
+                                  
+                                  print('soal terupload');
+
+                                  // exit dialog loading
+                                  LoadingDialog.hide(context);
+                                  
+                                  MyBigPopUp.showAlertDialog(
+                                    teks: 'Soal sudah terupload!', 
+                                    context: context,
+                                  );
+                                } catch (e) {
+                                  // exit dialog loading
+                                  LoadingDialog.hide(context);
+
+                                  MyBigPopUp.showAlertDialog(
+                                    teks: 'Gagal upload!', 
+                                    context: context,
+                                  );
                                 }
-                                
-                                print('soal terupload');
-                                
-                                MyBigPopUp.showAlertDialog(
-                                  teks: 'Soal sudah terupload!', 
-                                  context: context,
-                                );
-                                              
-                                // Navigator.push(context, MaterialPageRoute(
-                                //   builder: (context) => SelesaiBuatSoalUmumPage()
-                                // )
-                                // );
                               } else {
                                 MySmallPopUp.showToast(message: 'Soal tidak valid!');
                               }

@@ -9,6 +9,7 @@ import '../../components/my_form_row.dart';
 import '../../components/my_textfield.dart';
 import '../../models/profil.dart';
 import '../../services/auth_service.dart';
+import 'forgot_password.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -137,17 +138,10 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       resizeToAvoidBottomInset : false,
       backgroundColor: Color(0xFF00cfd6),
-      // backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.blue[900],
-      //   actions: const [
-      //     SkipButton()
-      //   ],
-      // ),
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 8.0),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.0),
@@ -198,6 +192,26 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   
                     const SizedBox(height: 10),
+
+                    // forgot password?
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => FormForgotPassword()));
+                            },
+                            child: Text(
+                              'Lupa Password?',
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                             
                     // jika memilih checkbox admin maka muncul textfield baru
                     // Cek apakah selectedAnswerNotifier.value valid
@@ -217,25 +231,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   
                     // const SizedBox(height: 10),
-                  
-                    // // forgot password?
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.end,
-                    //     children: [
-                    //       GestureDetector(
-                    //         onTap: () {
-                    //           // Navigator.push(context, MaterialPageRoute(builder: (context) => FormForgotPassword()));
-                    //         },
-                    //         child: Text(
-                    //           'Lupa Password?',
-                    //           style: TextStyle(color: Colors.grey[600]),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                   
                     const SizedBox(height: 20),
                   

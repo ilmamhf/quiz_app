@@ -26,6 +26,7 @@ class FirestoreService {
         'Soal': soalUmum.soal,
         'Jawaban': soalUmum.listJawaban,
         'Jawaban Benar': soalUmum.jawabanBenar,
+        'Gambar': soalUmum.gambar
       });
 
       await addID(docRef);
@@ -42,6 +43,7 @@ class FirestoreService {
         'Soal': soalUmum.soal,
         'Jawaban': soalUmum.listJawaban,
         'Jawaban Benar': soalUmum.jawabanBenar,
+        'Gambar': soalUmum.gambar
       });
       print('Dokumen berhasil diperbarui dengan ID: ${soalUmum.id}');
     } catch (e) {
@@ -50,9 +52,9 @@ class FirestoreService {
   }
 
   // Fungsi untuk menghapus soal di Firestore
-  Future<void> deleteSoalPGUmum(soalId) async {
+  Future<void> deleteSoalPGUmum(soalId, String tipe) async {
     try {
-      await _firestore.collection('soal pg umum').doc(soalId).delete();
+      await _firestore.collection('soal pg $tipe').doc(soalId).delete();
       print('Dokumen dengan ID $soalId berhasil dihapus.');
     } catch (e) {
       print('Gagal menghapus dokumen: $e');
@@ -70,6 +72,7 @@ class FirestoreService {
           listJawaban: List<String>.from(data['Jawaban']),
           jawabanBenar: data['Jawaban Benar'],
           id: doc.id,
+          gambar: data['Gambar'] ?? ''
         );
       }).toList();
     } catch (e) {
@@ -217,8 +220,8 @@ class FirestoreService {
     }
   }
 
-  // Fungsi untuk mengupdate admin
-  Future<void> updateAdmin(Profil userProfile) async {
+  // Fungsi untuk mengupdate admin / evaluator 
+  Future<void> updateAccount(Profil userProfile) async {
     try {
       await _firestore.collection('users').doc(FirebaseAuth.instance.currentUser !.uid).update({
         'Nama Lengkap': userProfile.nama,
@@ -247,19 +250,19 @@ class FirestoreService {
     }
   }
 
-  // Fungsi untuk mengupdate evaluator
-  Future<void> updateEvaluator(Profil userProfile) async {
-    try {
-      await _firestore.collection('users').doc(FirebaseAuth.instance.currentUser !.uid).update({
-        'Nama Lengkap': userProfile.nama,
-        'Tanggal Lahir': userProfile.tglLahir,
-        'Jenis Kelamin': userProfile.jenisKelamin,
-        'No HP': userProfile.noHP,
-      });
-    } catch (e) {
-      print('Gagal memperbarui evaluator: $e');
-    }
-  }
+  // // Fungsi untuk mengupdate evaluator
+  // Future<void> updateEvaluator(Profil userProfile) async {
+  //   try {
+  //     await _firestore.collection('users').doc(FirebaseAuth.instance.currentUser !.uid).update({
+  //       'Nama Lengkap': userProfile.nama,
+  //       'Tanggal Lahir': userProfile.tglLahir,
+  //       'Jenis Kelamin': userProfile.jenisKelamin,
+  //       'No HP': userProfile.noHP,
+  //     });
+  //   } catch (e) {
+  //     print('Gagal memperbarui evaluator: $e');
+  //   }
+  // }
 
   // Fungsi untuk menambah user (hanya bisa dilakukan oleh evaluator)
   Future<void> addUserByEvaluator(Profil userProfile, String userID) async {
@@ -287,9 +290,25 @@ class FirestoreService {
         'Tanggal Lahir': userProfile.tglLahir,
         'Jenis Kelamin': userProfile.jenisKelamin,
         'No HP': userProfile.noHP,
+        'password': userProfile.password
       });
     } catch (e) {
       print('Gagal memperbarui user: $e');
+    }
+  }
+
+  // Fungsi untuk menghapus user berdasarkan userID
+  Future<void> deleteUser(String userID) async {
+    try {
+      // Referensi ke koleksi 'users' di Firestore
+      DocumentReference userDoc = _firestore.collection('users').doc(userID);
+
+      // Hapus dokumen user berdasarkan userID
+      await userDoc.delete();
+
+      print('User dengan ID $userID berhasil dihapus.');
+    } catch (e) {
+      print('Error saat menghapus user: $e');
     }
   }
 

@@ -1,13 +1,13 @@
 class SoalPG {
   final String soal;
-  // final String gambar;
+  final String gambar;
   final List<String> listJawaban;
   final String jawabanBenar;
   String id;
   
   SoalPG({
     required this.soal,
-    // required this.gambar,
+    this.gambar = '',
     required this.listJawaban,
     required this.jawabanBenar,
     this.id = 'firebase document id',

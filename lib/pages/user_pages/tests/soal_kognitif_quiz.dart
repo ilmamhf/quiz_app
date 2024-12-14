@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../components/my_appbar.dart';
 import '../../../components/my_form_row.dart';
 import '../../../components/my_textfield.dart';
+import '../../../components/network_image.dart';
 import '../../../models/profil.dart';
 import '../../../models/soal.dart';
 import '../../../services/auth_service.dart';
@@ -126,7 +127,7 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              height: screenHeight * 9/13,
+              height: screenHeight * 10/13,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -141,6 +142,7 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
                     
                   Expanded(
                     child: PageView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
                       controller: _controller,
                       itemCount: soal.length,
                       onPageChanged: (index) {
@@ -229,6 +231,7 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
+          constraints: BoxConstraints(minHeight: 200),
           decoration: BoxDecoration(
             // border: Border.all(color: Colors.black, width: 2.0),
             color: Colors.white,
@@ -237,6 +240,11 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              soal.gambar.isNotEmpty ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: MyNetworkImage(imageUrl: soal.gambar),
+              ) : SizedBox.shrink(),
+
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Container(
@@ -244,7 +252,7 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
                   child: Text(
                     soal.soal,
                     style: TextStyle(fontSize: 16.0),
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.justify,
                   ),
                 ),
               ),
