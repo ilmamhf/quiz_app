@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +8,6 @@ import '../../components/my_button.dart';
 import '../../components/my_checkbox_row.dart';
 import '../../components/my_form_row.dart';
 import '../../components/my_textfield.dart';
-import '../../components/phone_field.dart';
 import '../../components/small_popup.dart';
 import '../../components/sub_judul.dart';
 import '../../models/profil.dart';
@@ -28,16 +25,10 @@ class TambahUserPage extends StatelessWidget {
     final namaLengkapController = TextEditingController();
     final dateController = TextEditingController();
 
-    // final jenisKelaminController = TextEditingController();
     List<String> jenisKelamin= ['Pria', 'Wanita'];
-    // bool isChecked = false;
     ValueNotifier<int> selectedAnswerNotifier = ValueNotifier<int>(-1);
     
     final NoHPController = TextEditingController();
-
-    // Future<bool> cekKetersediaanUsername(username) async {
-    //   await firestoreService.cekKetersediaanUsername(usernameController.text);
-    // }
 
     return Scaffold(
       backgroundColor: Color(0xFF00cfd6),

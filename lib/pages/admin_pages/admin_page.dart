@@ -5,7 +5,6 @@ import '../../components/home_appbar.dart';
 import '../../components/my_menu_card.dart';
 import '../../models/profil.dart';
 import '../../services/auth_service.dart';
-import '../../services/firestore.dart';
 import 'forms/soal_kognitif_umum_formpage.dart';
 import 'forms/soal_umum_formpage.dart';
 import '../common_pages/home_page.dart';
@@ -22,7 +21,7 @@ class AdminPage extends StatefulWidget {
 class _AdminPageState extends State<AdminPage> {
   final AuthService authService = AuthService();
   bool adaUser = false;
-  Profil? userSaatIni = null;
+  Profil? userSaatIni;
   bool isLoading = false;
 
   @override
@@ -48,10 +47,10 @@ class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     return isLoading ? 
-        Center(child: CircularProgressIndicator(),)
+        const Center(child: const CircularProgressIndicator(),)
       : Scaffold(
       appBar: HomeAppbar(profil: userSaatIni!,),
-      backgroundColor: Color(0xFF00cfd6),
+      backgroundColor: const Color(0xFF00cfd6),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -64,62 +63,62 @@ class _AdminPageState extends State<AdminPage> {
                   // buat soal umum
                   MyMenuCard(
                     onTap: () => 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalPGUmum())), 
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const FormSoalPGUmum())), 
                     text: 'Buat Soal PG Umum', 
                     size: 140,
-                    cardIcon: Icon(Icons.list, size: 60,),
+                    cardIcon: const Icon(Icons.list, size: 60,),
                   ),
                   
             
                   // buat soal kognitif umum
                   MyMenuCard(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalKognitifUmum()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const FormSoalKognitifUmum()));
                     },
                     text: 'Buat Soal Kognitif Umum',
                     size: 140,
-                    cardIcon: Icon(Icons.article, size: 60,),
+                    cardIcon: const Icon(Icons.article, size: 60,),
                   ),
               
             
                   // buat soal video umum
                   MyMenuCard(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => FormSoalVideoUmum()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const FormSoalVideoUmum()));
                     },
                     text: 'Buat Soal Video Umum', 
                     size: 140,
-                    cardIcon: Icon(Icons.videocam, size: 60,),
+                    cardIcon: const Icon(Icons.videocam, size: 60,),
                   ),
               
             
                   // List Data Evaluator
                   MyMenuCard(
                     onTap: () =>
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ListUserPage(tipe: 'Evaluator'))), 
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ListUserPage(tipe: 'Evaluator'))), 
                     text: 'List Data Evaluator', 
                     size: 140,
-                    cardIcon: Icon(Icons.account_box, size: 60,),
+                    cardIcon: const Icon(Icons.account_box, size: 60,),
                   ),
               
             
                   // List Data User
                   MyMenuCard(
                     onTap: () => 
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ListUserPage(tipe: 'User'))), 
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ListUserPage(tipe: 'User'))), 
                     text: 'List Data User', 
                     size: 140,
-                    cardIcon: Icon(Icons.people, size: 60,),
+                    cardIcon: const Icon(Icons.people, size: 60,),
                   ),
               
                   const SizedBox(height: 40),
               
                   // balik
                   MyMenuCard(
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage())), 
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage())), 
                     text: 'Kembali', 
                     size: 140,
-                    cardIcon: Icon(Icons.backspace, size: 60,),
+                    cardIcon: const Icon(Icons.backspace, size: 60,),
                   ),
                 ],
               ),

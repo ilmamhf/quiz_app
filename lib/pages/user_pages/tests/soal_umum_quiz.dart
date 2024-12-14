@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -108,10 +107,19 @@ class _SoalUmumQuizState extends State<SoalUmumQuiz> {
   }
 
   @override
+  void dispose() {
+    
+    // Bebaskan PageController
+    _controller.dispose();
+    
+    super.dispose(); // Panggil super.dispose() di akhir
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     double screenHeight = MediaQuery.sizeOf(context).height;
-    double screenWidth = MediaQuery.of(context).size.width;
+    // double screenWidth = MediaQuery.of(context).size.width;
     bool isKhusus = widget.khusus;
 
     return Scaffold(

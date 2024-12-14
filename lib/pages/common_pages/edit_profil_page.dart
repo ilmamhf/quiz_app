@@ -39,8 +39,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
   return DateFormat('dd/MM/yyyy').format(date); // Format DateTime ke dd/MM/yyyy
   }
 
-  // String TimestampToDateTime(timestamp)
-
+  @override
+  void dispose() {
+    // Bebaskan semua TextEditingController
+    namaLengkapController.dispose();
+    tglLahirController.dispose();
+    noHPController.dispose();
+    
+    super.dispose(); // Panggil super.dispose() di akhir
+  }
 
   @override
   Widget build(BuildContext context) {

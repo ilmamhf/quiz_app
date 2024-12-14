@@ -5,11 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:convert';
-
 Future<String?> uploadToCloudinary(File? image) async {
   if (image == null || !image.existsSync()) {
     print('No file selected');

@@ -36,12 +36,10 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
   final AuthService authService = AuthService();
   bool isLoading = false;
   
-  // late Future<List<SoalPG>> _soalListFuture;
   List<SoalPG> soal = [];
   PageController _controller = PageController();
   int currentPageIndex = 0;
 
-  // final soalController = TextEditingController();
   final gambarController = TextEditingController();
   List<String> listJawaban = ['', '', '', ''];
   List<String> abcd = ['A', 'B', 'C', 'D'];
@@ -60,6 +58,30 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
   File? newImage;
   List<String> gambarControllers = [];
   List<bool> gambarDariInternet = [];
+
+  @override
+  void dispose() {
+    // Bebaskan semua controller
+    for (var controller in soalControllers) {
+      controller.dispose();
+    }
+    for (var controller in jawabanBenarControllers) {
+      controller.dispose();
+    }
+    for (var jawabanList in jawabanControllers) {
+      for (var controller in jawabanList) {
+        controller.dispose();
+      }
+    }
+    for (var notifier in selectedAnswerNotifiers) {
+      notifier.dispose(); // Bebaskan ValueNotifier
+    }
+    // Bebaskan PageController
+    _controller.dispose();
+    // Bebaskan gambarController
+    gambarController.dispose();
+    super.dispose(); // Panggil super.dispose() di akhir
+  }
 
   @override
   void initState() {
@@ -87,6 +109,9 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
 
     if (fetchedSoal.isEmpty) {
       print('kosong');
+      setState(() {
+        soal = [];
+      });
     } else {
       setState(() {
       soal = fetchedSoal;
@@ -382,6 +407,14 @@ class _KumpulanSoalPageState extends State<KumpulanSoalPage> {
               canEdit: canEdit,
               deleteFunc: () {
                 _deleteSoal(soal.id);
+                if (currentPageIndex > 0) {
+                  setState(() {
+                    _controller.previousPage(
+                      duration: Duration(milliseconds: 1),
+                      curve: Curves.linear,
+                    );
+                  });
+                }
                 newImage = null;
               },
               editFunc: () {

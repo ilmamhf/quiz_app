@@ -37,6 +37,7 @@ class MyPageNavigatorButton extends StatelessWidget {
                         foregroundColor: Color(0xFF00A8AD),
                       ),
                       onPressed: currentPageIndex > 0 ? () {
+                        print(currentPageIndex);
                         pagesController.previousPage(
                           duration: Duration(milliseconds: 1),
                           curve: Curves.linear,

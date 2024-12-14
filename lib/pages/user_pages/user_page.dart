@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../components/home_appbar.dart';
-import '../../components/my_button.dart';
 import '../../components/my_menu_card.dart';
 import '../../models/profil.dart';
 import '../../services/auth_service.dart';
-import '../common_pages/home_page.dart';
 import '../common_pages/login_page.dart';
-import '../common_pages/profil_page.dart';
 import 'tests/soal_kognitif_quiz.dart';
 import 'tests/soal_umum_quiz.dart';
 import 'tests/soal_video_quiz.dart';
@@ -34,7 +31,7 @@ class _UserPageState extends State<UserPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
         );
       });
       return Container(); // Kembalikan widget kosong saat menunggu navigasi
@@ -42,7 +39,7 @@ class _UserPageState extends State<UserPage> {
     
     return Scaffold(
       appBar: HomeAppbar(profil: profil,),
-      backgroundColor: Color(0xFF00cfd6),
+      backgroundColor: const Color(0xFF00cfd6),
 
       body: SafeArea(
         child: SingleChildScrollView(
@@ -58,30 +55,30 @@ class _UserPageState extends State<UserPage> {
                       // soal pg umum
                       MyMenuCard(
                         onTap: () =>
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SoalUmumQuiz())),
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const SoalUmumQuiz())),
                         text: 'Soal PG Umum', 
                         size: 140,
-                        cardIcon: Icon(Icons.list, size: 60,),
+                        cardIcon: const Icon(Icons.list, size: 60,),
                       ),
                       
                               
                       // soal kognitif umum
                       MyMenuCard(
                         onTap: () =>
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SoalKognitifQuiz())),
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const SoalKognitifQuiz())),
                         text: 'Soal Kognitif Umum',
                         size: 140,
-                        cardIcon: Icon(Icons.article, size: 60,),
+                        cardIcon: const Icon(Icons.article, size: 60,),
                       ),
                   
                               
                       // soal video umum
                       MyMenuCard(
                         onTap: () =>
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SoalVideoQuiz())), 
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const SoalVideoQuiz())), 
                         text: 'Soal Video Umum', 
                         size: 140,
-                        cardIcon: Icon(Icons.videocam, size: 60,),
+                        cardIcon: const Icon(Icons.videocam, size: 60,),
                       ),
                   
                               
@@ -91,7 +88,7 @@ class _UserPageState extends State<UserPage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => SoalUmumQuiz(currentUser: profil, khusus: true,))),
                         text: 'Soal PG Khusus', 
                         size: 140,
-                        cardIcon: Icon(Icons.list, size: 60,),
+                        cardIcon: const Icon(Icons.list, size: 60,),
                       ),
                       
                               
@@ -101,7 +98,7 @@ class _UserPageState extends State<UserPage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => SoalKognitifQuiz(currentUser: profil, khusus: true,))),
                         text: 'Soal Kognitif Khusus',
                         size: 140,
-                        cardIcon: Icon(Icons.article, size: 60,),
+                        cardIcon: const Icon(Icons.article, size: 60,),
                       ),
                   
                               
@@ -111,15 +108,15 @@ class _UserPageState extends State<UserPage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => SoalVideoQuiz(currentUser: profil, khusus: true,))), 
                         text: 'Soal Video Khusus', 
                         size: 140,
-                        cardIcon: Icon(Icons.videocam, size: 60,),
+                        cardIcon: const Icon(Icons.videocam, size: 60,),
                       ),
                   
                       // balik
                       MyMenuCard(
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())), 
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage())), 
                         text: 'Kembali', 
                         size: 140,
-                        cardIcon: Icon(Icons.backspace, size: 60,),
+                        cardIcon: const Icon(Icons.backspace, size: 60,),
                       ),
                     ],
                   ),

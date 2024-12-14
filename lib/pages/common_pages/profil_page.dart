@@ -1,18 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 import '../../components/my_appbar.dart';
 import '../../components/my_button.dart';
-import '../../components/my_form_row.dart';
-import '../../components/my_textfield.dart';
 import '../../components/sub_judul.dart';
 import '../../components/user_data_display.dart';
 import '../../models/profil.dart';
 import '../../services/auth_service.dart';
-import '../../services/firestore.dart';
 import 'edit_profil_page.dart';
 
 class ProfilPage extends StatefulWidget {
@@ -140,7 +135,7 @@ class _ProfilPageState extends State<ProfilPage> {
                               MaterialPageRoute(
                                 builder: (context) => EditProfilePage(
                                     profil:
-                                        userSaatIni!), // Ganti dengan objek yang sesuai
+                                        userSaatIni), // Ganti dengan objek yang sesuai
                               ),
                             );
                           },

@@ -1,24 +1,17 @@
-import 'dart:ffi';
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-// import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../../../components/big_popup.dart';
 import '../../../components/my_appbar.dart';
 import '../../../components/my_button.dart';
 import '../../../components/my_form_row.dart';
-import '../../../components/my_image_picker.dart';
 import '../../../components/my_textfield.dart';
-// import '../../../components/my_yt_player.dart';
 import '../../../components/my_yt_player.dart';
 import '../../../components/small_popup.dart';
 import '../../../models/soal.dart';
 import '../../../services/firestore.dart';
-import '../kumpulan_kognitif_umum_page.dart';
 import '../kumpulan_video_page.dart';
 
 class FormSoalVideoUmum extends StatefulWidget {
@@ -105,6 +98,8 @@ class _FormSoalVideoUmumState extends State<FormSoalVideoUmum> {
   void dispose() {
     _controller.dispose();
     urlController.dispose();
+    jawabanBenarController.dispose();
+    soalController.dispose();
     super.dispose();
   }
 

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import '../../components/date_picker.dart';
 import '../../components/my_button.dart';
@@ -10,7 +9,6 @@ import '../../components/my_dropdown.dart';
 import '../../components/my_form_row.dart';
 import '../../components/my_textfield.dart';
 
-import '../../components/phone_field.dart';
 import '../../components/small_popup.dart';
 import '../../models/profil.dart';
 import '../../services/firestore.dart';
@@ -54,7 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
     // check if password is confirmed
     if (passwordController.text != confirmPasswordController.text) {
       Navigator.pop(context);
-      showErrorMessage("Passwords tidak sama!");
+      MySmallPopUp.showToast(message: "Passwords tidak sama!");
       return;
     } else {
       // try creating user
@@ -92,25 +90,29 @@ class _RegisterPageState extends State<RegisterPage> {
 
           // show error message
           if (e.code == 'invalid-email') {
-            showErrorMessage('Email is invalid');
+            MySmallPopUp.showToast(message: 'Email is invalid');
           } else if (e.code == 'email-already-in-use') {
-            showErrorMessage('The account already exists for that email.');
+            MySmallPopUp.showToast(message: 'The account already exists for that email.');
           }
       }
     }
   }
 
-  // error message popup
-  void showErrorMessage(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0
-    );
+  @override
+  void dispose() {
+    // Bebaskan semua TextEditingController
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    namaLengkapController.dispose();
+    tglLahirController.dispose();
+    noHPController.dispose();
+    passwordAdminController.dispose();
+    
+    // Bebaskan ValueNotifier
+    selectedAnswerNotifier.dispose();
+    
+    super.dispose(); // Panggil super.dispose() di akhir
   }
 
   @override
@@ -287,7 +289,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                       kelaminController.isEmpty ||
                                       noHPController.text.isEmpty ||
                                       selectedAnswerNotifier.value == -1) {
-                                    showErrorMessage("Tidak boleh ada yang kosong");
+                                    MySmallPopUp.showToast(message: "Tidak boleh ada yang kosong");
                                   } else {
                                     if (tipeAkunTerpilih == 'Admin') {
                                       if (passwordAdminController.text == 'admin') {
@@ -326,54 +328,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                       },
                     ),
-
-                    // // sign up button
-                    // MyButton(
-                    //   text: "Sign Up",
-                    //   onTap: () {
-                    //     tipeAkunTerpilih = tipeAkun[selectedAnswerNotifier.value];
-
-                    //     if (emailController.text.isEmpty ||
-                    //         passwordController.text.isEmpty ||
-                    //         confirmPasswordController.text.isEmpty ||
-                    //         namaLengkapController.text.isEmpty ||
-                    //         tglLahirController.text.isEmpty ||
-                    //         kelaminController.isEmpty ||
-                    //         noHPController.text.isEmpty ||
-                    //         selectedAnswerNotifier.value == -1) {
-                    //       showErrorMessage("Tidak boleh ada yang kosong");
-                    //     } else {
-                    //       if (tipeAkunTerpilih == 'Admin') {
-                    //         if (passwordAdminController.text == 'admin') {
-                    //           signUserUp();
-                    //         } else {
-                    //           MySmallPopUp.showToast(message: 'Password admin salah');
-                    //         }
-                    //       }
-                    //       signUserUp();
-                    //     }
-                    //   },
-                    //   size: 25,
-                    // ),
-                    // const SizedBox(height: 20),
-                    // // login
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     const Text("Sudah punya akun?"),
-                    //     const SizedBox(width: 4),
-                    //     GestureDetector(
-                    //       onTap: changePage,
-                    //       child: const Text(
-                    //         "Login sekarang",
-                    //         style: TextStyle(
-                    //           color: Colors.black,
-                    //           fontWeight: FontWeight.bold,
-                    //         ),
-                    //       ),
-                    //     )
-                    //   ],
-                    // ),
                     const SizedBox(height: 20),
                   ],
                 ),

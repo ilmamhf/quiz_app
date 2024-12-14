@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../components/my_appbar.dart';
 import '../../components/my_button.dart';
-import 'user_page.dart';
 
 class NilaiPage extends StatelessWidget {
   final int jawabanBenar;
@@ -22,18 +19,18 @@ class NilaiPage extends StatelessWidget {
     double nilaiAkhir = (jawabanBenar / jumlahSoal) * 100;
 
     return Scaffold(
-      backgroundColor: Color(0xFF00CFD6),
-      appBar: MyAppBar(title: 'Hasil Akhir',),
+      backgroundColor: const Color(0xFF00CFD6),
+      appBar: const MyAppBar(title: 'Hasil Akhir',),
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                Text('Total jawaban benar',style: TextStyle(fontSize: 18, color: Colors.white),),
+                const Text('Total jawaban benar',style: const TextStyle(fontSize: 18, color: Colors.white),),
                 const SizedBox(height: 5),
 
-                Text('$jawabanBenar dari $jumlahSoal soal', style: TextStyle(fontSize: 18, color: Colors.white),),
+                Text('$jawabanBenar dari $jumlahSoal soal', style: const TextStyle(fontSize: 18, color: Colors.white),),
                 const SizedBox(height: 30),
 
                 Expanded(
@@ -48,8 +45,8 @@ class NilaiPage extends StatelessWidget {
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20.0),
+                            const Padding(
+                              padding: EdgeInsets.only(top: 20.0),
                               child: Text('Total nilai akhir kamu', style: TextStyle(fontSize: 36,),textAlign: TextAlign.center,),
                             ),
                                           
@@ -57,14 +54,14 @@ class NilaiPage extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(20.0),
                                 child: Container(
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Color(0xFF99FCFF),
                                   ),
                                   child: Center(
                                     child: Text(
                                       nilaiAkhir.toString(), 
-                                      style: TextStyle(fontSize: 72),
+                                      style: const TextStyle(fontSize: 72),
                                     )
                                   ),
                                 ),
@@ -86,23 +83,6 @@ class NilaiPage extends StatelessWidget {
                     Navigator.popUntil(context, ModalRoute.withName('/userpage'));
                   },
                 ),
-
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: MyButton(
-                //         text: 'Ulangi',
-                //         size: 5,
-                //         onTap: () {
-                //           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => 
-                //             NilaiPage(jawabanBenar: totalSkor, jumlahSoal: soal.length)), (Route<dynamic> route) => false,);
-                //         },
-                //       ),
-                //     ),
-
-                    
-                //   ],
-                // ),
               ],
             ),
           ),

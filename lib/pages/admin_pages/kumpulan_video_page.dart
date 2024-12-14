@@ -70,7 +70,10 @@ class _KumpulanSoalVideoPageState extends State<KumpulanSoalVideoPage> {
     }
 
     if (fetchedSoal.isEmpty) {
-      print('kosnng');
+      print('kosong');
+      setState(() {
+        soal = [];
+      });
     } else {
       setState(() {
       soal = fetchedSoal;
@@ -182,11 +185,22 @@ class _KumpulanSoalVideoPageState extends State<KumpulanSoalVideoPage> {
 
   @override
   void dispose() {
+    // Bebaskan semua controller
+    for (var controller in soalControllers) {
+      controller.dispose();
+    }
+    for (var controller in jawabanBenarControllers) {
+      controller.dispose();
+    }
+    for (var controller in urlControllers) {
+      controller.dispose();
+    }
+    for (var videoController in videoControllers) {
+      videoController.dispose(); // Pastikan untuk membebaskan YoutubePlayerController
+    }
+    // Bebaskan PageController
     _controller.dispose();
-      for (var videoController in videoControllers) {
-        videoController.dispose();
-      }
-    super.dispose();
+    super.dispose(); // Panggil super.dispose() di akhir
   }
 
   // @override
@@ -375,7 +389,17 @@ class _KumpulanSoalVideoPageState extends State<KumpulanSoalVideoPage> {
             // edit, hapus, batal, simpan
             MySoalCRUDButton(
               canEdit: canEdit,
-              deleteFunc: () {_deleteSoal(soal.id);},
+              deleteFunc: () {
+                _deleteSoal(soal.id);
+                if (currentPageIndex > 0) {
+                  setState(() {
+                    _controller.previousPage(
+                      duration: Duration(milliseconds: 1),
+                      curve: Curves.linear,
+                    );
+                  });
+                }
+              },
               editFunc: () {_editSoal(soal);},
               batalFunc: () {
                 //balikkan value

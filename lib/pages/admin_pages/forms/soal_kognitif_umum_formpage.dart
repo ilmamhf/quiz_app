@@ -10,7 +10,6 @@ import '../../../components/my_button.dart';
 import '../../../components/my_form_row.dart';
 import '../../../components/my_image_picker.dart';
 import '../../../components/my_textfield.dart';
-import '../../../components/my_yt_player.dart';
 import '../../../components/small_popup.dart';
 import '../../../models/soal.dart';
 import '../../../services/cloudinary.dart';
@@ -58,10 +57,9 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
 
     String? userTerpilihID = widget.userTerpilihID;
     bool isKhusus = widget.khusus;
-    // bool isVideo = widget.isVideo;
 
     return Scaffold(
-      backgroundColor: Color(0xFF00cfd6),
+      backgroundColor: const Color(0xFF00cfd6),
 
       appBar: MyAppBar(
         title: isKhusus == false 
@@ -214,7 +212,7 @@ class _FormSoalKognitifUmumState extends State<FormSoalKognitifUmum> {
                             text: 'Kumpulan Soal',
                             onTap: isKhusus == false ? 
                               () => 
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => KumpulanSoalKognitifPage()))
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const KumpulanSoalKognitifPage()))
                               :() => Navigator.push(context, MaterialPageRoute(builder: (context) => KumpulanSoalKognitifPage(khusus: true, userTerpilihID: userTerpilihID,))), 
                             paddingSize: 15,
                           ),

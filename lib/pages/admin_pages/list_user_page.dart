@@ -14,8 +14,6 @@ import '../../components/page_navigator_button.dart';
 import '../../components/small_popup.dart';
 import '../../components/soal_crud_button.dart';
 import '../../components/sub_judul.dart';
-import '../../components/text_display.dart';
-import '../../components/user_data_display.dart';
 import '../../models/profil.dart';
 import '../../services/firestore.dart';
 
@@ -74,8 +72,13 @@ class _ListUserPageState extends State<ListUserPage> {
     } else {
       fetchedListUser = await _firestoreService.fetchAllUserAsAdmin(widget.tipe, null);
     }
-    
-    setState(() {
+
+    if (fetchedListUser.isEmpty) {
+      setState(() {
+        listUser = [];
+      });
+    } else {
+      setState(() {
       listUser = fetchedListUser;
       usernameControllers = List.generate(fetchedListUser.length, (index) => TextEditingController());
       namaLengkapControllers = List.generate(fetchedListUser.length, (index) => TextEditingController());
@@ -106,12 +109,39 @@ class _ListUserPageState extends State<ListUserPage> {
 
       isLoading = false;
     });
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _fetchListUser();
+  }
+
+  @override
+  void dispose() {
+    // Bebaskan semua controller
+    for (var controller in namaLengkapControllers) {
+      controller.dispose();
+    }
+    for (var controller in usernameControllers) {
+      controller.dispose();
+    }
+    for (var controller in tglLahirControllers) {
+      controller.dispose();
+    }
+    for (var controller in noHpControllers) {
+      controller.dispose();
+    }
+    for (var controller in passwordControllers) {
+      controller.dispose();
+    }
+    for (var notifier in selectedAnswerNotifiers) {
+      notifier.dispose(); // Bebaskan ValueNotifier
+    }
+    // Bebaskan PageController
+    _controller.dispose();
+    super.dispose(); // Panggil super.dispose() di akhir
   }
 
   void _deleteUser(String userName) async {
@@ -205,7 +235,7 @@ class _ListUserPageState extends State<ListUserPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: PageView.builder(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       controller: _controller,
                       itemCount: listUser.length,
                       onPageChanged: (index) {
@@ -259,14 +289,8 @@ class _ListUserPageState extends State<ListUserPage> {
             MySubJudul(text: 'Akun :',),
       
             const SizedBox(height: 5),
-      
-            // username
-            // nama
-            // nama
-            // MyUserDataDisplay(
-            //   text1: 'Nama Lengkap',
-            //   text2: user.nama,
-            // ),
+
+            //username
             MyFormRow(
               labelText: 'Nama Akun',
               myWidget: MyTextField(
@@ -349,6 +373,14 @@ class _ListUserPageState extends State<ListUserPage> {
               canEdit: canEdit,
               deleteFunc: () {
                 _deleteUser(user.username!);
+                if (currentPageIndex > 0) {
+                  setState(() {
+                    _controller.previousPage(
+                      duration: Duration(milliseconds: 1),
+                      curve: Curves.linear,
+                    );
+                  });
+                }
               },
               editFunc: () {
                 _editUser(user, selectedAnswerNotifiers[index].value);

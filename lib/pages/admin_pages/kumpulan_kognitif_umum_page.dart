@@ -15,7 +15,6 @@ import '../../models/soal.dart';
 import '../../services/auth_service.dart';
 import '../../services/cloudinary.dart';
 import '../../services/firestore.dart';
-import 'forms/soal_video_page.dart';
 
 class KumpulanSoalKognitifPage extends StatefulWidget {
   final String? userTerpilihID; // nama user opsional
@@ -36,7 +35,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
   final FirestoreService firestoreService = FirestoreService();
   final AuthService authService = AuthService();
 
-  List<SoalKognitif> soal = [];
+  List<SoalKognitif> soals = [];
   PageController _controller = PageController();
   int currentPageIndex = 0;
   File? newImage;
@@ -47,6 +46,20 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
 
   bool canEdit = false;
   bool isLoading = true;
+
+  @override
+  void dispose() {
+    // Bebaskan semua controller
+    for (var controller in soalControllers) {
+      controller.dispose();
+    }
+    for (var controller in jawabanBenarControllers) {
+      controller.dispose();
+    }
+    // Bebaskan PageController
+    _controller.dispose();
+    super.dispose(); // Panggil super.dispose() di akhir
+  }
 
   @override
   void initState() {
@@ -64,11 +77,14 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
 
     if (fetchedSoal.isNotEmpty) {
       setState(() {
-        soal = fetchedSoal;
+        soals = fetchedSoal;
         _initializeControllers(fetchedSoal);
       });
     } else {
       print('kosong');
+      setState(() {
+        soals = [];
+      });
     }
 
     setState(() => isLoading = false);
@@ -156,7 +172,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
   }
 
   void _saveLocal(SoalKognitif soalBaru, int index) {
-    soal[index] = soalBaru;
+    soals[index] = soalBaru;
   }
 
   void _exitEdit() {
@@ -175,7 +191,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
       appBar: MyAppBar(title: "Kumpulan Soal"),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : soal.isEmpty
+          : soals.isEmpty
               ? Center(
                   child: Text("Tidak ada soal",
                       style: TextStyle(color: Colors.white)))
@@ -196,7 +212,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
                             child: PageView.builder(
                               physics: const NeverScrollableScrollPhysics(),
                               controller: _controller,
-                              itemCount: soal.length,
+                              itemCount: soals.length,
                               onPageChanged: (index) {
                                 setState(() {
                                   currentPageIndex = index;
@@ -204,7 +220,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
                                 _exitEdit();
                               },
                               itemBuilder: (context, index) {
-                                return buildSoalPage(soal[index], index);
+                                return buildSoalPage(soals[index], index);
                               },
                             ),
                           ),
@@ -212,7 +228,7 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
                         MyPageNavigatorButton(
                           canEdit: canEdit,
                           currentPageIndex: currentPageIndex,
-                          pageLength: soal.length,
+                          pageLength: soals.length,
                           pagesController: _controller,
                         ),
                       ],
@@ -304,6 +320,14 @@ class _KumpulanSoalKognitifPageState extends State<KumpulanSoalKognitifPage> {
               canEdit: canEdit,
               deleteFunc: () {
                 _deleteSoal(soal.id);
+                if (currentPageIndex > 0) {
+                  setState(() {
+                    _controller.previousPage(
+                      duration: Duration(milliseconds: 1),
+                      curve: Curves.linear,
+                    );
+                  });
+                }
                 newImage = null;
               },
               editFunc: () {

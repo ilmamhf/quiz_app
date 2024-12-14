@@ -1,11 +1,6 @@
 import 'dart:io';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../components/big_popup.dart';
 import '../../../components/loading_popup.dart';
@@ -59,13 +54,22 @@ class _FormSoalPGUmumState extends State<FormSoalPGUmum> {
   File? _selectedImage;
 
   @override
+  void dispose() {
+    soalController.dispose();
+    gambarController.dispose();
+    for (var controller in jawabanControllers) {
+      controller.dispose();
+    }
+    jawabanBenarController.dispose();
+    selectedAnswerNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     String? userTerpilihID = widget.userTerpilihID;
     bool isKhusus = widget.khusus;
-
-    // double screenWidth = MediaQuery.sizeOf(context).width;
-    // double screenHeight = MediaQuery.sizeOf(context).height;
 
     return Scaffold(
       backgroundColor: Color(0xFF00cfd6),

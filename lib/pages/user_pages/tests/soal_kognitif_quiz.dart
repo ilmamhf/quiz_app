@@ -32,16 +32,11 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
   bool isLoading = false;
   
   List<SoalKognitif> soal = [];
-
   PageController _controller = PageController();
-
-  // Map<int, String> userAnswers = {};
   int currentPageIndex = 0;
-
-  // List<TextEditingController> soalControllers = [];
   List<TextEditingController> jawabanUserController = [];
 
-    // Fungsi untuk mengambil soal dari Firestore
+  // Fungsi untuk mengambil soal dari Firestore
   Future<void> _fetchSoalUmum() async {
     setState(() {
       isLoading = true;
@@ -107,6 +102,17 @@ class _SoalKognitifQuizState extends State<SoalKognitifQuiz> {
   void initState() {
     super.initState();
     _fetchSoalUmum();
+  }
+
+  @override
+  void dispose() {
+    // Bebaskan semua TextEditingController
+    for (var controller in jawabanUserController) {
+      controller.dispose();
+    }
+    // Bebaskan PageController
+    _controller.dispose();
+    super.dispose(); // Panggil super.dispose() di akhir
   }
 
   @override

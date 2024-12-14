@@ -63,12 +63,12 @@ class _LoginPageState extends State<LoginPage> {
           } else {
             Navigator.pop(context); // pop the loading circle
             // Jika login gagal, tampilkan pesan kesalahan
-            showErrorMessage('Password salah');
+            MySmallPopUp.showToast(message: 'Password salah');
           }
         } else {
           Navigator.pop(context); // pop the loading circle
           // Jika login gagal, tampilkan pesan kesalahan
-          showErrorMessage('User tidak ditemukan');
+          MySmallPopUp.showToast(message: 'User tidak ditemukan');
         }
       } else {
         // try sign in
@@ -94,18 +94,18 @@ class _LoginPageState extends State<LoginPage> {
           // show error message
           print(e.code);
           if (e.code == 'user-not-found') {
-            showErrorMessage('Akun tidak ditemukan');
+            MySmallPopUp.showToast(message: 'Akun tidak ditemukan');
           } else if (e.code == 'wrong-password') {
-            showErrorMessage('Password salah');
+            MySmallPopUp.showToast(message: 'Password salah');
           } else if (e.code == 'invalid-email') {
-            showErrorMessage('Email tidak valid');
+            MySmallPopUp.showToast(message: 'Email tidak valid');
           } else if (e.code == 'too-many-requests') {
-            showErrorMessage('Terlalu banyak permintaan, silahkan coba nanti');
+            MySmallPopUp.showToast(message: 'Terlalu banyak permintaan, silahkan coba nanti');
           }
         }
       }
     } else {
-      showErrorMessage('Akun tidak ditemukan!');
+      MySmallPopUp.showToast(message: 'Akun tidak ditemukan!');
       // pop the loading circle
       Navigator.pop(context);
     }
@@ -114,17 +114,15 @@ class _LoginPageState extends State<LoginPage> {
     
   }
 
-  // error message popup
-  void showErrorMessage(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0
-    );
+  @override
+  void dispose() {
+    // Bebaskan semua TextEditingController
+    emailController.dispose();
+    passwordController.dispose();
+    passwordAdminController.dispose();
+    // Bebaskan ValueNotifier
+    selectedAnswerNotifier.dispose();
+    super.dispose(); // Panggil super.dispose() di akhir
   }
 
   @override

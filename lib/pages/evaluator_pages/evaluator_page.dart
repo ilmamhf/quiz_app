@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -6,7 +5,6 @@ import '../../components/home_appbar.dart';
 import '../../components/my_menu_card.dart';
 import '../../models/profil.dart';
 import '../../services/auth_service.dart';
-import '../../services/firestore.dart';
 import '../admin_pages/forms/soal_kognitif_umum_formpage.dart';
 import '../admin_pages/forms/soal_umum_formpage.dart';
 import '../admin_pages/list_user_page.dart';
@@ -28,9 +26,6 @@ class EvaluatorPage extends StatefulWidget {
 
 class _EvaluatorPageState extends State<EvaluatorPage> {
 
-    // get nama----
-  // String fullName = 'loading..';
-  // final FirestoreService firestoreService = FirestoreService();
   final AuthService authService = AuthService();
   bool adaUser = false;
   Profil? userSaatIni = null;
@@ -77,7 +72,7 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
     Profil? userTermonitor = widget.userTerpilih;
 
     return isLoading ? 
-        Center(child: CircularProgressIndicator(),)
+        const Center(child: CircularProgressIndicator(),)
       : Scaffold(
       appBar: HomeAppbar(
         profil: userSaatIni!,
@@ -87,21 +82,21 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
             ),
             onPressed: () async {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PilihUserPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const PilihUserPage()));
             },
             child: Text(userTermonitor == null ? "Pilih User" : "Ganti User", 
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
             )
           )
         ),
       ],
       ),
 
-      backgroundColor: Color(0xFF00cfd6),
+      backgroundColor: const Color(0xFF00cfd6),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -119,13 +114,13 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: // Tampilkan teks berdasarkan kondisi
                         userTermonitor == null
-                          ? Text(
+                          ? const Text(
                               "Saat ini anda belum memilih user untuk dimonitor, silahkan gunakan tombol 'Pilih User' di kanan atas layar untuk memilih user",
                               style: TextStyle(fontSize: 14),
                             )
                           : Text(
                               'User terpilih: ${userTermonitor.nama}',
-                        style: TextStyle(fontSize: 18, color: Colors.green),
+                        style: const TextStyle(fontSize: 18, color: Colors.green),
                       ),
                     ),
                   ),
@@ -143,7 +138,7 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                         : () {}, 
                         text: 'Buat Soal PG Khusus', 
                         size: 140,
-                        cardIcon: Icon(Icons.list, size: 60,),
+                        cardIcon: const Icon(Icons.list, size: 60,),
                       ),
                       
                               
@@ -156,7 +151,7 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                         : () {}, 
                         text: 'Buat Soal Kognitif Khusus',
                         size: 140,
-                        cardIcon: Icon(Icons.article, size: 60,),
+                        cardIcon: const Icon(Icons.article, size: 60,),
                       ),
                   
                               
@@ -165,16 +160,16 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                         onTap: () => {}, 
                         text: 'Buat Soal Video Khusus', 
                         size: 140,
-                        cardIcon: Icon(Icons.videocam, size: 60,),
+                        cardIcon: const Icon(Icons.videocam, size: 60,),
                       ),
                   
                               
                       // Tambah user
                       MyMenuCard(
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TambahUserPage())), 
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const TambahUserPage())), 
                         text: 'Tambah User', 
                         size: 140,
-                        cardIcon: Icon(Icons.group_add, size: 60,),
+                        cardIcon: const Icon(Icons.group_add, size: 60,),
                       ),
                   
                               
@@ -184,17 +179,17 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => ListUserPage(tipe: 'User' , evaluatorID: FirebaseAuth.instance.currentUser!.uid))), 
                         text: 'List Data User', 
                         size: 140,
-                        cardIcon: Icon(Icons.people, size: 60,),
+                        cardIcon: const Icon(Icons.people, size: 60,),
                       ),
                   
                       const SizedBox(height: 40),
                   
                       // balik
                       MyMenuCard(
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage())), 
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage())), 
                         text: 'Kembali', 
                         size: 140,
-                        cardIcon: Icon(Icons.backspace, size: 60,),
+                        cardIcon: const Icon(Icons.backspace, size: 60,),
                       ),
                     ],
                   ),
@@ -204,42 +199,6 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
           ),
         ),
       ),
-
-      // floatingActionButton: Container(
-      //   width: 100,
-      //   height: 100,
-      //   // decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-      //   child: FloatingActionButton(
-      //     onPressed: () {}, 
-      //     child: Icon(Icons.auto_graph, size: 40, ), 
-      //     shape: CircleBorder(),
-      //     backgroundColor: Color(0xFF68F1F6),
-      //     foregroundColor: Colors.white,
-      //   )
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // bottomNavigationBar: BottomAppBar(
-      //   elevation: 0,
-      //   // notchMargin: 5.0,
-      //   // shape: CircularNotchedRectangle(),
-      //   color: Colors.white,
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //     children: [
-      //       IconButton(
-      //         onPressed: () {}, 
-      //         icon: Icon(Icons.home),
-      //         highlightColor: Color(0xFF68F1F6),
-      //       ),
-
-      //       IconButton(
-      //         onPressed: () {}, 
-      //         icon: Icon(Icons.person),
-      //         highlightColor: Color(0xFF68F1F6),
-      //       ),
-      //     ],
-      //   ),
-      // ),
     );
   }
 }

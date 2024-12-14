@@ -60,6 +60,12 @@ class _PilihUserPageState extends State<PilihUserPage> {
   }
 
   @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     
     return Scaffold(
