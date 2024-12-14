@@ -393,10 +393,7 @@ class _KumpulanSoalVideoPageState extends State<KumpulanSoalVideoPage> {
                 _deleteSoal(soal.id);
                 if (currentPageIndex > 0) {
                   setState(() {
-                    _controller.previousPage(
-                      duration: Duration(milliseconds: 1),
-                      curve: Curves.linear,
-                    );
+                    _controller.jumpTo(currentPageIndex.toDouble());
                   });
                 }
               },

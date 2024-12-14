@@ -375,10 +375,7 @@ class _ListUserPageState extends State<ListUserPage> {
                 _deleteUser(user.username!);
                 if (currentPageIndex > 0) {
                   setState(() {
-                    _controller.previousPage(
-                      duration: Duration(milliseconds: 1),
-                      curve: Curves.linear,
-                    );
+                    _controller.jumpTo(currentPageIndex.toDouble());
                   });
                 }
               },
