@@ -82,7 +82,7 @@ class _RegisterPageState extends State<RegisterPage> {
           // pop the loading circle
           Navigator.pop(context);
 
-          Navigator.pushReplacementNamed(context, '/verifypage', arguments: userProfile);
+          Navigator.pushReplacementNamed(context, '/verifypage', arguments: tipeAkunTerpilih);
 
       } on FirebaseAuthException catch (e) {
           // pop the loading circle
@@ -291,14 +291,19 @@ class _RegisterPageState extends State<RegisterPage> {
                                       selectedAnswerNotifier.value == -1) {
                                     MySmallPopUp.showToast(message: "Tidak boleh ada yang kosong");
                                   } else {
-                                    if (tipeAkunTerpilih == 'Admin') {
+                                    if(passwordController.text.length < 8) {
+                                      MySmallPopUp.showToast(message: "Password minimal 8 karakter");
+                                    } else {
+                                      if (tipeAkunTerpilih == 'Admin') {
                                       if (passwordAdminController.text == 'admin') {
                                         signUserUp();
                                       } else {
                                         MySmallPopUp.showToast(message: 'Password admin salah');
                                       }
+                                    } else {
+                                      signUserUp();
                                     }
-                                    signUserUp();
+                                    }
                                   }
                                 },
                                 size: 25,

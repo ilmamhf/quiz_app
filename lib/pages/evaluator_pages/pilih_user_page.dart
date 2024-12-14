@@ -80,7 +80,7 @@ class _PilihUserPageState extends State<PilihUserPage> {
         ? Center(child: CircularProgressIndicator()) // Kondisi loading
       : SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20.0),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.0),
@@ -93,9 +93,10 @@ class _PilihUserPageState extends State<PilihUserPage> {
                 children: [
                   // gambar
                   Container(
-                    width: 300,
-                    height: 300,
-                    color: Colors.red,
+                    width: 250,
+                    height: 250,
+                    // color: Colors.red,
+                    child: FittedBox(fit: BoxFit.fill, child: Icon(Icons.person_search)),
                   ),
               
                   SizedBox(height: 20.0,),

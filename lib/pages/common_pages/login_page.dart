@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
 
           // Jika login berhasil, navigasi ke halaman berikutnya
           // Navigator.pushReplacementNamed(context, '/verifypage', arguments: profil);
-          Navigator.pushReplacementNamed(context, '/verifypage');
+          Navigator.pushReplacementNamed(context, '/verifypage', arguments: tipeAkunTerpilih);
 
         } on FirebaseAuthException catch (e) {
           // pop the loading circle

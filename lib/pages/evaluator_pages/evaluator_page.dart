@@ -8,7 +8,7 @@ import '../../services/auth_service.dart';
 import '../admin_pages/forms/soal_kognitif_umum_formpage.dart';
 import '../admin_pages/forms/soal_umum_formpage.dart';
 import '../admin_pages/list_user_page.dart';
-import '../common_pages/home_page.dart';
+// import '../common_pages/home_page.dart';
 import 'pilih_user_page.dart';
 import 'tambah_user_page.dart';
 
@@ -186,8 +186,11 @@ class _EvaluatorPageState extends State<EvaluatorPage> {
                   
                       // balik
                       MyMenuCard(
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage())), 
-                        text: 'Kembali', 
+                        // onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage())), 
+                        onTap: () async {
+                          await AuthService().signout(context: context);
+                        },
+                        text: 'Log Out', 
                         size: 140,
                         cardIcon: const Icon(Icons.backspace, size: 60,),
                       ),

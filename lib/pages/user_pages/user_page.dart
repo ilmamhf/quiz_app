@@ -114,7 +114,7 @@ class _UserPageState extends State<UserPage> {
                       // balik
                       MyMenuCard(
                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage())), 
-                        text: 'Kembali', 
+                        text: 'Keluar', 
                         size: 140,
                         cardIcon: const Icon(Icons.backspace, size: 60,),
                       ),
@@ -126,20 +126,6 @@ class _UserPageState extends State<UserPage> {
           ),
         ),
       ),
-
-      // floatingActionButton: Container(
-      //   width: 100,
-      //   height: 100,
-      //   // decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-      //   child: FloatingActionButton(
-      //     onPressed: () {}, 
-      //     child: Icon(Icons.auto_graph, size: 40, ), 
-      //     shape: CircleBorder(),
-      //     backgroundColor: Color(0xFF68F1F6),
-      //     foregroundColor: Colors.white,
-      //   )
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

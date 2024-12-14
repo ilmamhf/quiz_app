@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-class MyTextField extends StatelessWidget {
+class MyTextField extends StatefulWidget {
   final controller;
   final String hintText;
   final bool obscureText;
@@ -18,7 +18,20 @@ class MyTextField extends StatelessWidget {
     this.digitOnly = false
     });
 
+  @override
+  State<MyTextField> createState() => _MyTextFieldState();
+}
+
+class _MyTextFieldState extends State<MyTextField> {
   // FocusNode node = FocusNode();
+
+  bool _passwordVisible = false;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _passwordVisible = false;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -39,14 +52,14 @@ class MyTextField extends StatelessWidget {
           ConstrainedBox(
             constraints: BoxConstraints(maxHeight: 100.0),
             child: TextFormField(
-              enabled: enabled,
+              enabled: widget.enabled,
               
-              controller: controller,
-              obscureText: obscureText,
+              controller: widget.controller,
+              obscureText: widget.obscureText ? !_passwordVisible : false, // Update this line
             
-              keyboardType: digitOnly ? TextInputType.number : TextInputType.multiline,
-              inputFormatters: digitOnly ? [FilteringTextInputFormatter.digitsOnly] : [],
-              maxLines: obscureText ? 1 : null ,
+              keyboardType: widget.digitOnly ? TextInputType.number : TextInputType.multiline,
+              inputFormatters: widget.digitOnly ? [FilteringTextInputFormatter.digitsOnly] : [],
+              maxLines: widget.obscureText ? 1 : null ,
               style: TextStyle(fontSize: 14),
             
               decoration: InputDecoration(
@@ -59,7 +72,23 @@ class MyTextField extends StatelessWidget {
                 ),
                 fillColor: Colors.white,
                 filled: true,
-                hintText: hintText
+                hintText: widget.hintText,
+
+                suffixIcon: widget.obscureText ? IconButton(
+                  icon: Icon(
+                    // Based on passwordVisible state choose the icon
+                    _passwordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+                    // color: Theme.of(context).primaryColorDark,
+                    ),
+                  onPressed: () {
+                    // Update the state i.e. toogle the state of passwordVisible variable
+                    setState(() {
+                        _passwordVisible = !_passwordVisible;
+                    });
+                  },
+                ) : SizedBox.shrink(),
               ),
             ),
           ),

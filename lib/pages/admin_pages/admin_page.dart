@@ -7,7 +7,7 @@ import '../../models/profil.dart';
 import '../../services/auth_service.dart';
 import 'forms/soal_kognitif_umum_formpage.dart';
 import 'forms/soal_umum_formpage.dart';
-import '../common_pages/home_page.dart';
+// import '../common_pages/home_page.dart';
 import 'forms/soal_video_page.dart';
 import 'list_user_page.dart';
 
@@ -115,8 +115,11 @@ class _AdminPageState extends State<AdminPage> {
               
                   // balik
                   MyMenuCard(
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage())), 
-                    text: 'Kembali', 
+                    // onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage())), 
+                    onTap: () async {
+                      await AuthService().signout(context: context);
+                    },
+                    text: 'Log Out', 
                     size: 140,
                     cardIcon: const Icon(Icons.backspace, size: 60,),
                   ),
@@ -126,42 +129,6 @@ class _AdminPageState extends State<AdminPage> {
           ),
         ),
       ),
-
-      // floatingActionButton: Container(
-      //   width: 100,
-      //   height: 100,
-      //   // decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
-      //   child: FloatingActionButton(
-      //     onPressed: () {}, 
-      //     child: Icon(Icons.auto_graph, size: 40, ), 
-      //     shape: CircleBorder(),
-      //     backgroundColor: Color(0xFF68F1F6),
-      //     foregroundColor: Colors.white,
-      //   )
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // bottomNavigationBar: BottomAppBar(
-      //   elevation: 0,
-      //   // notchMargin: 5.0,
-      //   // shape: CircularNotchedRectangle(),
-      //   color: Colors.white,
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //     children: [
-      //       IconButton(
-      //         onPressed: () {}, 
-      //         icon: Icon(Icons.home),
-      //         highlightColor: Color(0xFF68F1F6),
-      //       ),
-
-      //       IconButton(
-      //         onPressed: () {}, 
-      //         icon: Icon(Icons.person),
-      //         highlightColor: Color(0xFF68F1F6),
-      //       ),
-      //     ],
-      //   ),
-      // ),
     );
   }
 }
